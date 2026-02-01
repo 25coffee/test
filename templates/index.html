@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心理测试生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4a5568;
+            box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.1);
+        }
+        
+        .form-hint {
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        button:hover {
+            background: #2d3748;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(74, 85, 104, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .result-container.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-title {
+            color: #2d3748;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .test-name-display {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #edf2f7;
+            border-radius: 8px;
+            border-left: 4px solid #4a5568;
+        }
+        
+        .result-text {
+            color: #333;
+            font-size: 16px;
+            line-height: 1.6;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #4a5568;
+        }
+        
+        .error {
+            color: #e74c3c;
+            background: #fee;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #4a5568;
+            display: none;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>心理测试生成器</h1>
+        
+        <form id="testForm">
+            <div class="form-group">
+                <label for="test_id">测试编号：</label>
+                <input type="text" id="test_id" name="test_id" placeholder="请输入测试编号" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="options">选项（输入字母，如：AAABBC）：</label>
+                <input type="text" id="options" name="options" placeholder="例如：AAABBC" required>
+            </div>
+            
+            <button type="submit">确认生成</button>
+        </form>
+        
+        <div class="loading" id="loading">处理中...</div>
+        
+        <div class="error" id="error"></div>
+        
+        <div class="result-container" id="resultContainer">
+            <div class="result-title" id="resultTitle"></div>
+            <div class="test-name-display" id="testNameDisplay"></div>
+            <div class="result-text" id="resultText"></div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const resultContainer = document.getElementById('resultContainer');
+            const resultTitle = document.getElementById('resultTitle');
+            const testNameDisplay = document.getElementById('testNameDisplay');
+            const resultText = document.getElementById('resultText');
+            
+            // 隐藏之前的结果和错误
+            error.classList.remove('show');
+            resultContainer.classList.remove('show');
+            loading.classList.add('show');
+            
+            try {
+                const response = await fetch('/test', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                loading.classList.remove('show');
+                
+                if (response.ok && data.success) {
+                    // 显示结果
+                    resultTitle.textContent = '测试结果';
+                    testNameDisplay.textContent = `测试名称：${data.test_name}`;
+                    
+                    resultText.textContent = data.result;
+                    resultContainer.classList.add('show');
+                } else {
+                    // 显示错误
+                    error.textContent = data.error || '发生未知错误';
+                    error.classList.add('show');
+                }
+            } catch (err) {
+                loading.classList.remove('show');
+                error.textContent = '网络错误，请稍后重试';
+                error.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>
+
