@@ -6,10 +6,16 @@ import re
 import hashlib
 
 app = Flask(__name__)
-
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 # 测试结果文件目录和统一JSON文件
 TESTS_DIR = 'tests'
 TESTS_FILE = os.path.join(TESTS_DIR, 'tests.json')
+
+
+@app.after_request
+def add_header(response):
+    response.headers['Content-Type'] = 'text/html; charset=utf-8'
+    return response
 
 def generate_test_id(test_name):
     """根据测试名称生成test_id（MD5前6位）"""
@@ -85,7 +91,7 @@ def save_test_data(test_name, test_id, results):
 @app.route('/')
 def index():
     """主页"""
-    return render_template('index.html')
+    return render_template('index2.html')
 
 @app.route('/api/tests', methods=['GET'])
 def api_tests():
@@ -237,7 +243,7 @@ def debug_filesystem():
     
     return "<br>".join(result)
 
-    
+
 if __name__ == '__main__':
     # 确保tests目录存在
     os.makedirs(TESTS_DIR, exist_ok=True)

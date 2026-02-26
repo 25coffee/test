@@ -1,0 +1,40 @@
+@app.route('/')
+def index():
+    """最简单的测试"""
+    html_content = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>心理测试</title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <h1>心理测试系统</h1>
+        <p>如果看到这个页面，说明Flask工作正常</p>
+        <p>下一步需要检查模板文件</p>
+        <hr>
+        <h3>调试信息：</h3>
+    """
+    
+    # 添加调试信息
+    import os
+    templates_path = os.path.join(app.root_path, 'templates')
+    index_path = os.path.join(templates_path, 'index.html')
+    
+    html_content += f"""
+        <p>templates路径: {templates_path}</p>
+        <p>templates存在: {os.path.exists(templates_path)}</p>
+        <p>index.html存在: {os.path.exists(index_path)}</p>
+    """
+    
+    if os.path.exists(index_path):
+        try:
+            with open(index_path, 'r', encoding='utf-8') as f:
+                content_preview = f.read()[:200]
+            html_content += f"<p>index.html预览: {content_preview}...</p>"
+        except Exception as e:
+            html_content += f"<p>读取index.html失败: {str(e)}</p>"
+    
+    html_content += "</body></html>"
+    
+    return html_content
