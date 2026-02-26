@@ -214,6 +214,30 @@ def migrate_old_tests():
     if tests_data:
         save_all_tests_data(tests_data)
 
+
+@app.route('/debug/fs')
+def debug_filesystem():
+    """调试文件系统"""
+    import os
+    
+    result = []
+    result.append(f"<h2>文件系统调试</h2>")
+    
+    # 当前目录
+    cwd = os.getcwd()
+    result.append(f"<h3>当前目录: {cwd}</h3>")
+    result.append(f"<p>内容: {os.listdir(cwd)}</p>")
+    
+    # 递归查找templates
+    for root, dirs, files in os.walk(cwd):
+        if 'templates' in dirs or 'templates' in root:
+            result.append(f"<h3>找到templates: {root}</h3>")
+            result.append(f"<p>子目录: {dirs}</p>")
+            result.append(f"<p>文件: {files}</p>")
+    
+    return "<br>".join(result)
+
+    
 if __name__ == '__main__':
     # 确保tests目录存在
     os.makedirs(TESTS_DIR, exist_ok=True)
