@@ -12,9 +12,12 @@ TESTS_DIR = 'tests'
 TESTS_FILE = os.path.join(TESTS_DIR, 'tests.json')
 
 
+
 @app.after_request
-def add_header(response):
-    response.headers['Content-Type'] = 'text/html; charset=utf-8'
+def set_response_headers(response):
+    """确保所有HTML响应都有正确的Content-Type"""
+    if response.headers.get('Content-Type', '').startswith('text/html'):
+        response.headers['Content-Type'] = 'text/html; charset=utf-8'
     return response
 
 def generate_test_id(test_name):
@@ -91,7 +94,7 @@ def save_test_data(test_name, test_id, results):
 @app.route('/')
 def index():
     """主页"""
-    return render_template('index2.html')
+    return render_template('index.html')
 
 @app.route('/api/tests', methods=['GET'])
 def api_tests():
