@@ -224,12 +224,12 @@
         if (![10, 15].includes(optionsRaw.length)) {
           throw new Error('选项长度必须为 10 或 15 个字母');
         }
-        if (!/^[A-Z]+$/.test(optionsRaw)) {
-          throw new Error('选项只能包含 A-Z 字母');
+        if (!/^[A-E]+$/.test(optionsRaw)) {
+          throw new Error('选项只能包含 A-E 字母');
         }
 
         const bestOption = mostCommonLetter(optionsRaw);
-        if (!bestOption) throw new Error('选项不能为空（仅识别 A-Z 字母）');
+        if (!bestOption) throw new Error('选项不能为空（仅识别 A-E 字母）');
 
         const tests = await loadTests();
         const test = tests.find(t => String(t.test_id || '') === testId);
