@@ -141,7 +141,7 @@
 <body>
   <div class="container">
     <h1>心理测试结果查看</h1>
-    <div class="sub">GitHub Pages 静态版（不依赖后端）</div>
+    <div class="sub"></div>
 
     <form id="testForm">
       <div class="form-group">
@@ -166,9 +166,7 @@
       <div class="result-text" id="resultText"></div>
     </div>
 
-    <div class="hint">
-      本页面直接读取 <code>docs/tests/tests.json</code> 并在浏览器内计算结果（出现次数最多的选项）。
-    </div>
+    <div class="hint"></div>
   </div>
 
   <script>
@@ -221,6 +219,14 @@
       try {
         if (!testId) throw new Error('请输入测试编号');
         if (!optionsRaw) throw new Error('请输入选项');
+
+        // 校验选项长度：必须是 10 或 15 个字母（A-Z）
+        if (![10, 15].includes(optionsRaw.length)) {
+          throw new Error('选项长度必须为 10 或 15 个字母');
+        }
+        if (!/^[A-Z]+$/.test(optionsRaw)) {
+          throw new Error('选项只能包含 A-Z 字母');
+        }
 
         const bestOption = mostCommonLetter(optionsRaw);
         if (!bestOption) throw new Error('选项不能为空（仅识别 A-Z 字母）');
