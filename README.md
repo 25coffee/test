@@ -2,6 +2,23 @@
 
 一个基于Flask的简单心理测试结果生成器。
 
+## GitHub Pages（静态版）访问方式
+
+本仓库包含一个可直接发布到 GitHub Pages 的静态版本，发布目录为 `docs/`。
+
+### 发布步骤（推荐：从 `/docs` 发布）
+- 进入 GitHub 仓库页面 → **Settings** → **Pages**
+- **Source** 选择 **Deploy from a branch**
+- **Branch** 选择 `main`（或你的默认分支）
+- **Folder** 选择 **`/docs`**
+- 保存后等待 1–5 分钟，在 Pages 页面会显示你的站点链接
+
+### 访问链接规则
+- 如果仓库名是 `test`，账号是 `25coffee`，则链接通常是：`https://25coffee.github.io/test/`
+- 如果仓库名不同，把链接中的 `test` 替换成你的仓库名即可
+
+> 注意：点击仓库首页看到 README 是正常的；网站入口是 `docs/index.html`，需要用 **GitHub Pages 的 URL** 打开。
+
 ## 功能特点
 
 - 输入心理测试名称和选项字母串

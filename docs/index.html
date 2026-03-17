@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>心理测试结果查看</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 650px;
+      width: 100%;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    .sub {
+      text-align: center;
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+    .form-group { margin-bottom: 18px; }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #4a5568;
+      box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.1);
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #4a5568;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    button:hover {
+      background: #2d3748;
+      transform: translateY(-1px);
+      box-shadow: 0 5px 20px rgba(74, 85, 104, 0.25);
+    }
+    .hint {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+    .hint code { background: #eef; padding: 1px 6px; border-radius: 6px; }
+    .loading { text-align: center; color: #4a5568; display: none; margin-top: 14px; }
+    .loading.show { display: block; }
+    .error {
+      color: #e74c3c;
+      background: #fee;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 14px;
+      display: none;
+      white-space: pre-wrap;
+    }
+    .error.show { display: block; }
+    .result-container {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      display: none;
+    }
+    .result-container.show { display: block; }
+    .result-title { color: #2d3748; font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .test-name-display {
+      color: #555;
+      font-size: 15px;
+      margin-bottom: 12px;
+      padding: 10px;
+      background: #edf2f7;
+      border-radius: 8px;
+      border-left: 4px solid #4a5568;
+    }
+    .result-text {
+      color: #333;
+      font-size: 16px;
+      line-height: 1.7;
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      border-left: 4px solid #4a5568;
+      white-space: pre-wrap;
+    }
+    .small-links {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .small-links a {
+      font-size: 12px;
+      color: #667eea;
+      text-decoration: none;
+    }
+    .small-links a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>心理测试结果查看</h1>
+    <div class="sub">GitHub Pages 静态版（不依赖后端）</div>
+
+    <form id="testForm">
+      <div class="form-group">
+        <label for="test_id">测试编号</label>
+        <input type="text" id="test_id" name="test_id" placeholder="例如：729f31" required>
+      </div>
+
+      <div class="form-group">
+        <label for="options">选项（输入字母，如：AAABBC）</label>
+        <input type="text" id="options" name="options" placeholder="例如：AAABBC" required>
+      </div>
+
+      <button type="submit">确认查看</button>
+    </form>
+
+    <div class="loading" id="loading">处理中...</div>
+    <div class="error" id="error"></div>
+
+    <div class="result-container" id="resultContainer">
+      <div class="result-title" id="resultTitle"></div>
+      <div class="test-name-display" id="testNameDisplay"></div>
+      <div class="result-text" id="resultText"></div>
+    </div>
+
+    <div class="hint">
+      本页面直接读取 <code>docs/tests/tests.json</code> 并在浏览器内计算结果（出现次数最多的选项）。
+      <br>注：<code>manage</code> / <code>一问测试</code> / <code>一问不惑</code> 需要后端服务，GitHub Pages 上不可用。
+    </div>
+
+    <div class="small-links">
+      <a href="./manage.html">管理页（静态说明）</a>
+      <a href="./question_test.html">一问测试（静态说明）</a>
+      <a href="./yiwenbuhuo.html">一问不惑（静态说明）</a>
+    </div>
+  </div>
+
+  <script>
+    async function loadTests() {
+      const response = await fetch('./tests/tests.json', { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`无法加载 tests.json（HTTP ${response.status}）`);
+      }
+      const data = await response.json();
+      if (!Array.isArray(data)) {
+        throw new Error('tests.json 格式不正确：期望是 JSON 数组');
+      }
+      return data;
+    }
+
+    function mostCommonLetter(options) {
+      const counts = new Map();
+      for (const ch of options) {
+        if (ch >= 'A' && ch <= 'Z') {
+          counts.set(ch, (counts.get(ch) || 0) + 1);
+        }
+      }
+      let best = null;
+      let bestCount = -1;
+      for (const [k, v] of counts.entries()) {
+        if (v > bestCount) {
+          best = k;
+          bestCount = v;
+        }
+      }
+      return best;
+    }
+
+    document.getElementById('testForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const testId = document.getElementById('test_id').value.trim();
+      const optionsRaw = document.getElementById('options').value.trim().toUpperCase();
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultTitle = document.getElementById('resultTitle');
+      const testNameDisplay = document.getElementById('testNameDisplay');
+      const resultText = document.getElementById('resultText');
+
+      error.classList.remove('show');
+      resultContainer.classList.remove('show');
+      loading.classList.add('show');
+
+      try {
+        if (!testId) throw new Error('请输入测试编号');
+        if (!optionsRaw) throw new Error('请输入选项');
+
+        const bestOption = mostCommonLetter(optionsRaw);
+        if (!bestOption) throw new Error('选项不能为空（仅识别 A-Z 字母）');
+
+        const tests = await loadTests();
+        const test = tests.find(t => String(t.test_id || '') === testId);
+        if (!test) throw new Error(`未找到测试编号 "${testId}"`);
+
+        const results = test.results || {};
+        const result = results[bestOption];
+        if (!result) throw new Error(`该测试未配置选项 ${bestOption} 的结果`);
+
+        resultTitle.textContent = '测试结果';
+        testNameDisplay.textContent = `测试名称：${test.test_name || ''}（最多选项：${bestOption}）`;
+        resultText.textContent = result;
+        resultContainer.classList.add('show');
+      } catch (err) {
+        error.textContent = err && err.message ? err.message : String(err);
+        error.classList.add('show');
+      } finally {
+        loading.classList.remove('show');
+      }
+    });
+  </script>
+</body>
+</html>
+
