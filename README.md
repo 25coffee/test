@@ -89,10 +89,8 @@ JSON文件格式如下：
 
 ## 添加新测试
 
-1. 访问管理页面 `/manage`
-2. 输入测试名称和各个选项的测试结果
-3. 点击"保存/更新测试"按钮
-4. 系统会自动生成test_id并添加到 `tests/tests.json` 文件中
+1. 编辑 `tests/tests.json`（或 GitHub Pages 版本的 `docs/tests/tests.json`）
+2. 按照已有结构添加/更新测试数据（`test_id`、`test_name`、`results`）
 
 如果测试名称已存在（test_id相同），则会更新该测试；如果不存在，则会添加为新项。
 
