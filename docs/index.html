@@ -240,7 +240,7 @@
         if (!result) throw new Error(`该测试未配置选项 ${bestOption} 的结果`);
 
         resultTitle.textContent = '测试结果';
-        testNameDisplay.textContent = `测试名称：${test.test_name || ''}（最多选项：${bestOption}）`;
+        testNameDisplay.textContent = `测试名称：${test.test_name || ''}`;
         resultText.textContent = result;
         resultContainer.classList.add('show');
       } catch (err) {
