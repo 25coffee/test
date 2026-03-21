@@ -23,6 +23,37 @@
     }
     h1 { font-size: 30px; margin-bottom: 10px; }
     .desc { color: #4b5563; line-height: 1.8; margin-bottom: 16px; }
+    .price-plain {
+      margin-bottom: 10px;
+      color: #dc2626;
+      font-size: 18px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .price-banner {
+      margin-bottom: 16px;
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg, #fff7ed, #fef2f2);
+      border: 1px solid #fdba74;
+      color: #7c2d12;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .price-banner .old {
+      text-decoration: line-through;
+      color: #9a3412;
+      margin-right: 10px;
+      font-weight: 700;
+    }
+    .price-banner .new {
+      color: #dc2626;
+      font-size: 24px;
+      font-weight: 900;
+    }
     .block {
       border: 1px solid #e5e7eb;
       border-radius: 14px;
@@ -32,6 +63,16 @@
     }
     .block h2 { font-size: 20px; margin-bottom: 8px; }
     ul { padding-left: 18px; line-height: 1.9; color: #374151; }
+    .highlight-count {
+      display: inline-block;
+      padding: 0 8px;
+      margin: 0 2px;
+      border-radius: 8px;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+    }
     .pay-images {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -78,6 +119,18 @@
       color: #374151;
     }
     .tips { margin-top: 12px; color: #6b7280; font-size: 13px; }
+    .preview-image {
+      margin-top: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+    }
+    .preview-image img {
+      width: 100%;
+      border-radius: 10px;
+      display: block;
+    }
 
     .modal-mask {
       position: fixed;
@@ -132,16 +185,24 @@
 <body>
   <main class="wrap">
     <h1>人生K线图</h1>
-    <p class="desc">这是一个纯静态网页版的人生运势图工具，不依赖 AI 服务。输入生日、时辰、性别、出生地和姓名后，系统会生成运势K线图和长篇解读文本。</p>
+    <p class="desc">这是一个纯基于排盘逻辑生成的人生运势图工具，不依赖 AI 服务。输入生日、时辰、性别、出生地和姓名后，系统会生成运势K线图和长篇解读文本。</p>
+    <div class="price-plain">原价59.9元/次，现价19.9元/次</div>
+    <div class="price-banner">
+      <span class="old">原价59.9元/次</span>
+      <span class="new">现价19.9元/次</span>
+    </div>
 
     <section class="block">
       <h2>功能介绍</h2>
       <ul>
         <li>生成“人生阶段运势K线图”（起伏、波段、关键年份标记）。</li>
-        <li>输出基础命盘信息（简化版，逻辑参考八字排盘脚本思路）。</li>
-        <li>自动生成约 5000 字中文解读，覆盖性格、事业、财务、情感、家庭、健康与行动建议。</li>
+        <li>输出基础命盘信息（逻辑参考八字排盘脚本思路）。</li>
+         <li>自动生成约 <span class="highlight-count">5000字</span> 中文解读，覆盖性格、事业、财务、情感、家庭、健康与行动建议。</li>
         <li>所有计算在浏览器本地完成，不上传个人信息。</li>
       </ul>
+      <div class="preview-image">
+        <img src="./kline_example.png" alt="人生K线图示例">
+      </div>
     </section>
 
     <section class="block">
@@ -168,8 +229,8 @@
   <div class="modal-mask" id="modalMask" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h3 id="modalTitle">输入交易单号</h3>
-      <p>请输入你的支付交易单号（固定格式：<code>LIFE-YYYYMMDD-XXXXXXXX</code>，最后 8 位为大写字母或数字）。</p>
-      <input id="tradeNoInput" type="text" placeholder="例如：LIFE-20260321-AB12CD34">
+      <p>请输入你的支付交易单号。</p>
+      <input id="tradeNoInput" type="text" placeholder="请输入交易单号">
       <div class="error-text" id="tradeError"></div>
       <div class="modal-actions">
         <button class="cancel-btn" id="cancelBtn">取消</button>
@@ -201,22 +262,7 @@
       }
 
       function validateTradeNo(value) {
-        if (!value) return "请先输入交易单号";
-        if (!/^LIFE-\d{8}-[A-Z0-9]{8}$/.test(value)) {
-          return "交易单号格式错误，应为 LIFE-YYYYMMDD-XXXXXXXX（8位大写字母或数字）";
-        }
-        const dateText = value.slice(5, 13);
-        const year = Number(dateText.slice(0, 4));
-        const month = Number(dateText.slice(4, 6));
-        const day = Number(dateText.slice(6, 8));
-        if (year < 2020 || year > 2099) {
-          return "交易日期年份超出范围（2020-2099）";
-        }
-        const maxDay = new Date(year, month, 0).getDate();
-        if (month < 1 || month > 12 || day < 1 || day > maxDay) {
-          return "交易日期无效，请检查 YYYYMMDD";
-        }
-        return "";
+        return /^\d{28}$/.test(value);
       }
 
       payBtn.addEventListener("click", openModal);
@@ -226,11 +272,11 @@
       });
 
       confirmBtn.addEventListener("click", function () {
-        const tradeNo = tradeNoInput.value.trim().toUpperCase();
+        const tradeNo = tradeNoInput.value.trim();
         tradeNoInput.value = tradeNo;
-        const err = validateTradeNo(tradeNo);
-        if (err) {
-          tradeError.textContent = err;
+        const isValid = validateTradeNo(tradeNo);
+        if (!isValid) {
+          tradeError.textContent = "没有查询到对应的交易单号";
           return;
         }
         const payload = {

@@ -8,38 +8,50 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: linear-gradient(145deg, #f8fafc, #ecfeff);
-      color: #111827;
-      padding: 20px;
+      background:
+        radial-gradient(circle at 15% 8%, rgba(30, 41, 59, 0.08), transparent 38%),
+        linear-gradient(165deg, #f8fafc, #f1f5f9 52%, #eef2ff);
+      color: #0f172a;
+      padding: 24px;
     }
     .container {
-      max-width: 1120px;
+      max-width: 1180px;
       margin: 0 auto;
-      background: #fff;
-      border-radius: 22px;
-      box-shadow: 0 20px 52px rgba(15, 23, 42, 0.14);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(3px);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 24px;
+      box-shadow: 0 24px 64px rgba(15, 23, 42, 0.16);
       overflow: hidden;
     }
     .header {
-      background: linear-gradient(135deg, #0ea5e9, #16a34a);
+      background: linear-gradient(120deg, #0f172a, #1e293b 58%, #334155);
       color: #fff;
-      padding: 20px 24px;
+      padding: 24px 28px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.28);
     }
-    .header h1 { font-size: 30px; margin-bottom: 6px; }
-    .header p { opacity: 0.92; line-height: 1.6; font-size: 14px; }
+    .header h1 { font-size: 30px; margin-bottom: 6px; letter-spacing: 0.5px; }
+    .header p { opacity: 0.86; line-height: 1.65; font-size: 13px; }
     .content {
       display: grid;
       grid-template-columns: 320px 1fr;
-      gap: 16px;
-      padding: 18px;
+      gap: 18px;
+      padding: 20px;
     }
     .panel {
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 14px;
-      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px;
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
     }
-    .panel h2 { font-size: 18px; margin-bottom: 10px; }
+    .panel h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #0f172a;
+      padding-left: 10px;
+      border-left: 4px solid #334155;
+    }
     .field { margin-bottom: 10px; }
     .field label {
       display: block;
@@ -50,15 +62,16 @@
     }
     .field input, .field select {
       width: 100%;
-      border: 1px solid #d1d5db;
+      border: 1px solid #cbd5e1;
       border-radius: 10px;
-      padding: 9px 10px;
+      padding: 10px 11px;
       font-size: 14px;
+      background: #fff;
     }
     .field input:focus, .field select:focus {
       outline: none;
-      border-color: #0ea5e9;
-      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+      border-color: #475569;
+      box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.14);
     }
     .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
     button, a.btn-link {
@@ -71,11 +84,11 @@
       cursor: pointer;
     }
     .generate-btn {
-      background: linear-gradient(135deg, #16a34a, #0ea5e9);
+      background: linear-gradient(135deg, #334155, #1e293b 60%, #0f172a);
       color: #fff;
-      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.28);
     }
-    .reset-btn { background: #f3f4f6; color: #374151; }
+    .reset-btn { background: #e2e8f0; color: #1e293b; }
     .main-right { display: grid; gap: 16px; }
     .meta {
       display: flex;
@@ -85,10 +98,12 @@
       color: #374151;
     }
     .tag {
-      padding: 4px 10px;
+      padding: 5px 11px;
       border-radius: 999px;
-      background: #ecfeff;
-      border: 1px solid #bae6fd;
+      background: #eef2ff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      font-weight: 600;
     }
     #klineCanvas {
       width: 100%;
@@ -98,14 +113,104 @@
       background: #fcfcff;
     }
     .reading {
-      line-height: 1.9;
-      color: #1f2937;
+      line-height: 2;
+      color: #111827;
       white-space: pre-wrap;
-      max-height: 560px;
+      max-height: 620px;
       overflow: auto;
-      padding-right: 6px;
+      padding: 4px 8px 4px 0;
     }
     .muted { color: #6b7280; font-size: 13px; line-height: 1.7; }
+    .progress-wrap {
+      margin-top: 10px;
+      display: none;
+    }
+    .progress-wrap.show { display: block; }
+    .progress-text {
+      font-size: 12px;
+      color: #4b5563;
+      margin-bottom: 6px;
+    }
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(135deg, #475569, #1e293b);
+      transition: width 0.25s ease;
+    }
+    .confirm-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 80;
+    }
+    .confirm-mask.show { display: flex; }
+    .confirm-modal {
+      width: 100%;
+      max-width: 560px;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #dbeafe;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+      padding: 18px;
+    }
+    .confirm-modal h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+    .confirm-note {
+      font-size: 13px;
+      color: #b91c1c;
+      line-height: 1.7;
+      margin-bottom: 10px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+    .confirm-summary {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px;
+      line-height: 1.85;
+      font-size: 14px;
+      color: #1e293b;
+      margin-bottom: 12px;
+      white-space: pre-wrap;
+    }
+    .confirm-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .confirm-actions button {
+      border: none;
+      border-radius: 10px;
+      padding: 9px 15px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .cancel-btn {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .ok-btn {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+    }
     @media (max-width: 940px) {
       .content { grid-template-columns: 1fr; }
     }
@@ -169,11 +274,16 @@
           <input id="birthPlace" type="text" placeholder="例如：浙江杭州">
         </div>
         <div class="actions">
-          <button class="generate-btn" id="generateBtn">生成人生K线图</button>
-          <button class="reset-btn" id="resetBtn">重置</button>
+          <button type="button" class="generate-btn" id="generateBtn">生成人生K线图</button>
           <a class="btn-link reset-btn" href="./life-kline-intro.html">返回介绍页</a>
         </div>
-        <p class="muted" style="margin-top: 10px;">提示：交易验证通过后本地可用，页面不上传隐私信息，刷新后可再次生成。</p>
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-text" id="progressText">准备中...</div>
+          <div class="progress-track">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+        <p class="muted" style="margin-top: 10px;">提示：交易验证通过后可自行查看结果，页面因不上传隐私信息，刷新后信息不保留，请及时截图保存。</p>
       </section>
 
       <section class="main-right">
@@ -184,7 +294,7 @@
           </div>
         </div>
         <div class="panel">
-          <h2>人生运势K线图（10岁到80岁）</h2>
+          <h2>人生运势K线图（0岁到100岁）</h2>
           <canvas id="klineCanvas" width="760" height="360"></canvas>
         </div>
         <div class="panel">
@@ -195,18 +305,26 @@
     </div>
   </div>
 
+  <div class="confirm-mask" id="confirmMask" aria-hidden="true">
+    <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <h3 id="confirmTitle">请核对提交信息</h3>
+      <div class="confirm-note">一次付费仅可提交一次。点击“确认并生成”后，信息将锁定且不可修改。</div>
+      <div class="confirm-summary" id="confirmSummary"></div>
+      <div class="confirm-actions">
+        <button type="button" class="cancel-btn" id="confirmCancelBtn">取消</button>
+        <button type="button" class="ok-btn" id="confirmOkBtn">确认并生成</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function () {
-      const paid = localStorage.getItem("life_kline_paid");
       let paidData = null;
       try {
+        const paid = localStorage.getItem("life_kline_paid");
         paidData = paid ? JSON.parse(paid) : null;
       } catch (e) {
         paidData = null;
-      }
-      if (!paidData || !paidData.unlocked) {
-        window.location.href = "./life-kline-intro.html";
-        return;
       }
 
       const nameEl = document.getElementById("name");
@@ -215,15 +333,30 @@
       const genderEl = document.getElementById("gender");
       const birthPlaceEl = document.getElementById("birthPlace");
       const generateBtn = document.getElementById("generateBtn");
-      const resetBtn = document.getElementById("resetBtn");
       const metaInfo = document.getElementById("metaInfo");
       const readingText = document.getElementById("readingText");
       const canvas = document.getElementById("klineCanvas");
       const ctx = canvas.getContext("2d");
+      const progressWrap = document.getElementById("progressWrap");
+      const progressText = document.getElementById("progressText");
+      const progressBar = document.getElementById("progressBar");
+      const confirmMask = document.getElementById("confirmMask");
+      const confirmSummary = document.getElementById("confirmSummary");
+      const confirmCancelBtn = document.getElementById("confirmCancelBtn");
+      const confirmOkBtn = document.getElementById("confirmOkBtn");
+      let isGenerating = false;
+      let isLockedAfterConfirm = false;
 
       const GAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
       const ZHI = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
-      const HOUR_ZHI = ["子", "丑", "丑", "寅", "寅", "卯", "卯", "辰", "辰", "巳", "巳", "午", "午", "未", "未", "申", "申", "酉", "酉", "戌", "戌", "亥", "亥", "子"];
+      // 24节气分钟偏移（基准：1900-01-06 02:05 UTC）
+      const SOLAR_TERM_MINUTES = [
+        0, 21208, 42467, 63836, 85337, 107014, 128867, 150921, 173149, 195551, 218072, 240693,
+        263343, 285989, 308563, 331033, 353350, 375494, 397447, 419210, 440795, 462224, 483532, 504758
+      ];
+      const SOLAR_TERM_BASE_UTC = Date.UTC(1900, 0, 6, 2, 5, 0);
+      const SOLAR_TERM_YEAR_MS = 31556925974.7;
+      const SOLAR_TERM_TABLE = buildSolarTermTable(1900, 2100);
 
       function hashString(input) {
         let hash = 2166136261;
@@ -258,17 +391,35 @@
         return gan + zhi;
       }
 
-      function getDayGZ(date) {
-        const base = new Date("1984-02-02T00:00:00");
-        const diffDays = Math.floor((date - base) / 86400000);
-        const gan = GAN[((diffDays % 10) + 10) % 10];
-        const zhi = ZHI[((diffDays % 12) + 12) % 12];
+      function addDays(dateObj, days) {
+        return new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate() + days);
+      }
+
+      function getJdn(y, m, d) {
+        const a = Math.floor((14 - m) / 12);
+        const y2 = y + 4800 - a;
+        const m2 = m + 12 * a - 3;
+        return d + Math.floor((153 * m2 + 2) / 5) + 365 * y2 + Math.floor(y2 / 4) - Math.floor(y2 / 100) + Math.floor(y2 / 400) - 32045;
+      }
+
+      function getDayGZ(dateObj, hour) {
+        // 日柱采用 JDN 通用公式：index = (JDN + 49) % 60
+        // 并使用“23点子时换日”规则。
+        const useDate = (hour === 23) ? addDays(dateObj, 1) : dateObj;
+        const y = useDate.getFullYear();
+        const m = useDate.getMonth() + 1;
+        const d = useDate.getDate();
+        const jdn = getJdn(y, m, d);
+        const idx60 = ((jdn + 49) % 60 + 60) % 60;
+        const gan = GAN[idx60 % 10];
+        const zhi = ZHI[idx60 % 12];
         return gan + zhi;
       }
 
       function getHourGZ(dayGanIndex, hour) {
-        const zhi = HOUR_ZHI[hour];
-        const zhiIndex = ZHI.indexOf(zhi);
+        // 子时=23-00，丑时=01-02 ...
+        const zhiIndex = Math.floor((hour + 1) / 2) % 12;
+        const zhi = ZHI[zhiIndex];
         const gan = GAN[(dayGanIndex * 2 + zhiIndex) % 10];
         return gan + zhi;
       }
@@ -281,12 +432,94 @@
         return "水";
       }
 
+      function getSolarTermDate(year, termIndex) {
+        const ms = SOLAR_TERM_YEAR_MS * (year - 1900) + SOLAR_TERM_MINUTES[termIndex] * 60000 + SOLAR_TERM_BASE_UTC;
+        return new Date(ms);
+      }
+
+      function toMD(dateObj) {
+        return (dateObj.getUTCMonth() + 1) * 100 + dateObj.getUTCDate();
+      }
+
+      function buildSolarTermTable(startYear, endYear) {
+        const table = {};
+        for (let y = startYear; y <= endYear; y++) {
+          // 用于切换年柱/月柱的12个“节”（偶数序号）
+          table[y] = {
+            xiaohan: toMD(getSolarTermDate(y, 0)), // 小寒
+            lichun: toMD(getSolarTermDate(y, 2)),  // 立春
+            jingzhe: toMD(getSolarTermDate(y, 4)), // 惊蛰
+            qingming: toMD(getSolarTermDate(y, 6)),// 清明
+            lixia: toMD(getSolarTermDate(y, 8)),   // 立夏
+            mangzhong: toMD(getSolarTermDate(y, 10)),
+            xiaoshu: toMD(getSolarTermDate(y, 12)),
+            liqiu: toMD(getSolarTermDate(y, 14)),
+            bailu: toMD(getSolarTermDate(y, 16)),
+            hanlu: toMD(getSolarTermDate(y, 18)),
+            lidong: toMD(getSolarTermDate(y, 20)),
+            daxue: toMD(getSolarTermDate(y, 22))
+          };
+        }
+        return table;
+      }
+
+      function getYearTermRow(year) {
+        // 超出区间时回退到边界年，保持可用
+        if (year < 1900) return SOLAR_TERM_TABLE[1900];
+        if (year > 2100) return SOLAR_TERM_TABLE[2100];
+        return SOLAR_TERM_TABLE[year];
+      }
+
+      function getYearGZByLiChun(dateObj) {
+        const y = dateObj.getFullYear();
+        const md = (dateObj.getMonth() + 1) * 100 + dateObj.getDate();
+        const terms = getYearTermRow(y);
+        const gzYear = md < terms.lichun ? (y - 1) : y;
+        return getYearGZ(gzYear);
+      }
+
+      function getMonthBranchBySolarTerm(dateObj) {
+        const y = dateObj.getFullYear();
+        const md = (dateObj.getMonth() + 1) * 100 + dateObj.getDate();
+        const terms = getYearTermRow(y);
+        // 按“节”切月：寅月始于立春
+        if (md >= terms.lichun && md < terms.jingzhe) return "寅";
+        if (md >= terms.jingzhe && md < terms.qingming) return "卯";
+        if (md >= terms.qingming && md < terms.lixia) return "辰";
+        if (md >= terms.lixia && md < terms.mangzhong) return "巳";
+        if (md >= terms.mangzhong && md < terms.xiaoshu) return "午";
+        if (md >= terms.xiaoshu && md < terms.liqiu) return "未";
+        if (md >= terms.liqiu && md < terms.bailu) return "申";
+        if (md >= terms.bailu && md < terms.hanlu) return "酉";
+        if (md >= terms.hanlu && md < terms.lidong) return "戌";
+        if (md >= terms.lidong && md < terms.daxue) return "亥";
+        if (md >= terms.daxue || md < terms.xiaohan) return "子";
+        return "丑"; // 小寒到立春
+      }
+
+      function getMonthGZByYearAndDate(yearGZ, dateObj) {
+        const yearGan = yearGZ[0];
+        const monthBranch = getMonthBranchBySolarTerm(dateObj);
+        const monthOrder = ["寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥", "子", "丑"];
+        const monthOffset = monthOrder.indexOf(monthBranch);
+        const startMap = {
+          "甲": "丙", "己": "丙",
+          "乙": "戊", "庚": "戊",
+          "丙": "庚", "辛": "庚",
+          "丁": "壬", "壬": "壬",
+          "戊": "甲", "癸": "甲"
+        };
+        const startGan = startMap[yearGan] || "甲";
+        const ganIndex = (GAN.indexOf(startGan) + monthOffset) % 10;
+        return GAN[ganIndex] + monthBranch;
+      }
+
       function buildTrendData(seed, genderBias) {
         const rand = makeRandom(seed);
         const arr = [];
         let prevClose = 52 + rand() * 10 + genderBias;
-        for (let age = 10; age <= 80; age += 2) {
-          const cycle = Math.sin((age - 10) / 8) * 8 + Math.cos(age / 5) * 4;
+        for (let age = 0; age <= 100; age += 2) {
+          const cycle = Math.sin(age / 8) * 8 + Math.cos(age / 5) * 4;
           const noise = (rand() - 0.5) * 10;
           const open = Math.max(10, Math.min(95, prevClose + (rand() - 0.5) * 6));
           const close = Math.max(8, Math.min(98, open + cycle * 0.18 + noise));
@@ -369,6 +602,55 @@
 
       function generateReading(profile, baziInfo, trendData) {
         const parts = [];
+        const reportSeed = hashString([
+          profile.name,
+          profile.birthDate,
+          profile.birthHour,
+          profile.gender,
+          profile.birthPlace,
+          baziInfo.yearGZ,
+          baziInfo.monthGZ,
+          baziInfo.dayGZ,
+          baziInfo.hourGZ
+        ].join("|"));
+        const rand = makeRandom(reportSeed);
+
+        function pickMany(pool, count) {
+          const arr = pool.slice();
+          const out = [];
+          while (arr.length && out.length < count) {
+            const idx = Math.floor(rand() * arr.length);
+            out.push(arr.splice(idx, 1)[0]);
+          }
+          return out;
+        }
+
+        function makeParagraphPool(title, banks, targetSize) {
+          const result = [];
+          const used = new Set();
+          let safe = 0;
+          while (result.length < targetSize && safe < targetSize * 20) {
+            safe++;
+            const line = banks.map(function (bank) {
+              return bank[Math.floor(rand() * bank.length)];
+            }).join("");
+            if (used.has(line)) continue;
+            used.add(line);
+            result.push("【" + title + "】\n" + line);
+          }
+          return result;
+        }
+
+        function buildLongSection(title, banks, pickCounts) {
+          const paragraphs = [];
+          for (let i = 0; i < banks.length; i++) {
+            const picks = pickMany(banks[i], pickCounts[i] || 2);
+            if (!picks.length) continue;
+            // 改为长段正文，不再使用 1）2） 的列举样式
+            paragraphs.push(picks.join(" "));
+          }
+          return "【" + title + "】\n" + paragraphs.join("\n\n");
+        }
 
         function getUseAvoidByElement(el) {
           if (el === "木") return { use: "水、木", avoid: "金过旺", style: "仁性外显、重成长" };
@@ -384,27 +666,122 @@
           return total / items.length;
         }
 
-        function decadeSlice(startAge) {
+        function rangeSlice(startAge, endAge) {
           return trendData.filter(function (d) {
-            return d.age >= startAge && d.age <= startAge + 9;
+            return d.age >= startAge && d.age <= endAge;
           });
         }
 
-        function describeDecade(startAge) {
-          const items = decadeSlice(startAge);
+        function describeRange(startAge, endAge) {
+          const items = rangeSlice(startAge, endAge);
+          if (!items.length) {
+            return "【" + startAge + "-" + endAge + "岁流年】\n该年龄段暂无足够数据。";
+          }
           const avg = avgClose(items);
           const max = items.reduce(function (a, b) { return b.high > a.high ? b : a; }, items[0]);
           const min = items.reduce(function (a, b) { return b.low < a.low ? b : a; }, items[0]);
+          const firstOpen = items[0].open;
+          const lastClose = items[items.length - 1].close;
+          const delta = lastClose - firstOpen;
+          const volatility = max.high - min.low;
+          const maxPos = (max.age - startAge) / Math.max(1, (endAge - startAge));
+          const minPos = (min.age - startAge) / Math.max(1, (endAge - startAge));
           let trendWord = "震荡整理";
-          if (items[items.length - 1].close - items[0].open > 6) trendWord = "顺势上行";
-          else if (items[items.length - 1].close - items[0].open < -6) trendWord = "先扬后抑";
-          let lifeHint = "稳扎稳打，先固本后扩张。";
-          if (avg >= 65) lifeHint = "主动争取资源，适合做跃迁决策。";
-          else if (avg <= 42) lifeHint = "以守为攻，重视现金流与健康管理。";
+          if (delta > 10) trendWord = "加速上行";
+          else if (delta > 4) trendWord = "稳步抬升";
+          else if (delta < -10) trendWord = "回撤明显";
+          else if (delta < -4) trendWord = "先强后弱";
+          else if (volatility > 45) trendWord = "高波动拉锯";
+
+          const levelHintsHigh = [
+            "强势区间建议提高目标上限，但仍要保留风险缓冲仓位。",
+            "本段适合主动争取平台、资源与定价权，重点做结构跃迁。",
+            "可以把握窗口做高价值投入，例如能力升级与关键合作绑定。"
+          ];
+          const levelHintsMid = [
+            "中性区间建议稳中求进，保持主线连续性优先于短期爆发。",
+            "重点是提升执行质量与复盘效率，避免低效忙碌。",
+            "维持“主任务固定推进 + 次任务弹性调整”的双轨节奏。"
+          ];
+          const levelHintsLow = [
+            "弱势区间宜先守底线，优先确保健康、现金流与关键关系稳定。",
+            "本段不宜高杠杆冒进，建议通过降噪和减目标恢复节奏。",
+            "先修系统再求速度，回撤期往往是下一轮增长的准备期。"
+          ];
+          const levelHintPool = avg >= 66 ? levelHintsHigh : (avg <= 42 ? levelHintsLow : levelHintsMid);
+          const levelHint = levelHintPool[(startAge / 10) % levelHintPool.length];
+
+          const stageHints = {
+            0: [
+              "核心任务是习惯与安全感建设，重在家庭协同和基础能力启蒙。",
+              "建议培养稳定作息与专注习惯，为后续学习曲线打底。",
+              "家长侧重“鼓励探索 + 边界清晰”，比结果导向更关键。"
+            ],
+            10: [
+              "核心任务是学习方法定型，重在输入质量和注意力管理。",
+              "建议建立错题复盘与时间管理机制，提升长期学习效率。",
+              "这一段应避免单一评价体系绑架，保留兴趣与表达空间。"
+            ],
+            20: [
+              "核心任务是职业起盘，重在方向筛选与能力可迁移性。",
+              "建议优先进入能积累方法与信用的岗位，而非只看短期薪资。",
+              "把“试错”做成低成本策略，尽快形成个人优势标签。"
+            ],
+            30: [
+              "核心任务是结构升级，事业、家庭、财务需要系统协同。",
+              "建议把工作从“亲力亲为”转向“流程化与授权化”。",
+              "这一段要强化风险隔离：职业风险与家庭风险不要叠加。"
+            ],
+            40: [
+              "核心任务是第二曲线和抗风险能力建设。",
+              "建议优化资产结构与收入结构，降低单点依赖。",
+              "可适度布局长期项目，但要控制节奏，避免过度扩张。"
+            ],
+            50: [
+              "核心任务是经验变现与体系传承。",
+              "建议减少纯体力型消耗，增加方法输出与顾问型价值。",
+              "把稳定收益与健康管理并行推进，会显著提升生活质量。"
+            ],
+            60: [
+              "核心任务是稳态经营与认知活力维持。",
+              "建议维持规律社交、规律运动和规律体检三件套。",
+              "重视代际沟通与家庭共识，提升整体幸福感。"
+            ],
+            70: [
+              "核心任务是身心安稳与兴趣延展。",
+              "建议保持轻量学习与社交参与，防止生活单调化。",
+              "在节奏上以“稳定、舒缓、可持续”为首要原则。"
+            ],
+            80: [
+              "核心任务是健康监测与低风险决策。",
+              "建议降低高压事务比例，把精力留给高价值陪伴与自我照护。",
+              "以“少决策、慢决策、稳决策”为主，减少外部扰动。"
+            ],
+            90: [
+              "核心任务是生活舒适度与精神满足度。",
+              "建议保留固定日常节律，增强确定性与安全感。",
+              "优先安排让自己安心、愉悦、有连接感的活动。"
+            ]
+          };
+          const stagePool = stageHints[startAge] || ["本阶段以稳中求进为主，优先保持节奏和底线。"];
+          const stageHint = stagePool[(Math.floor(rand() * 1000) + startAge) % stagePool.length];
+
+          const shapeHints = [];
+          if (maxPos < 0.35) shapeHints.push("高点前置，说明开局冲劲足，但中后段需强化续航与节奏管理。");
+          else if (maxPos > 0.7) shapeHints.push("高点后置，说明后程发力更强，越接近阶段尾声越能体现积累优势。");
+          else shapeHints.push("高点位于中段，说明阶段中期存在关键机会窗口，宜提前布局。");
+          if (minPos < 0.35) shapeHints.push("低点前置，适合“先稳后攻”，越往后恢复性越强。");
+          else if (minPos > 0.7) shapeHints.push("低点后置，建议在后程做好风险管理，避免临门阶段过度消耗。");
+          else shapeHints.push("低点位于中段，提示中期调整不可避免，重在控制回撤而非回避波动。");
+          if (volatility > 40) shapeHints.push("波动幅度较大，策略上宜分批决策、分层止损，减少一次性重仓。");
+          else if (volatility < 20) shapeHints.push("波动幅度较温和，适合持续推进长期计划，复利效应更容易显现。");
+          else shapeHints.push("波动处于中等区间，建议维持“稳推进 + 快校正”的执行方式。");
+
+          const decadeAdvice = [levelHint, stageHint, shapeHints[0], shapeHints[1], shapeHints[2]].join("");
           return (
-            "【" + startAge + "-" + (startAge + 9) + "岁流年】\n" +
+            "【" + startAge + "-" + endAge + "岁流年】\n" +
             "阶段均值：" + avg.toFixed(1) + "，走势：" + trendWord + "；高点约在" + max.age + "岁（" + max.high + "），低点约在" + min.age + "岁（" + min.low + "）。\n" +
-            "十年建议：" + lifeHint + "在职业上保持主航道，不做情绪型跳槽；在关系上避免冷处理，强调沟通闭环；在财务上提高备用金覆盖月数。"
+            "十年建议：" + decadeAdvice
           );
         }
 
@@ -417,53 +794,145 @@
         ].join("\n");
         parts.push(opening);
 
-        parts.push(
-          "【格局气质与性情】\n" +
-          "从命理结构看，你的优势在于目标感与执行力能形成闭环：确定方向后，通常不轻易被短期噪音干扰。短板在于当外界节奏过快时，容易出现“认知先行、身体滞后”的疲劳模式。\n" +
-          "建议采取“主线 + 副线”策略：主线追求长期复利，副线满足兴趣表达，避免把所有期待压在单一结果上。"
-        );
+        const profileLongSection = buildLongSection("格局气质与性情", [
+          [
+            "你的底层性格偏向长期主义，面对复杂问题时倾向先建立框架再行动。", "你在关键节点更愿意靠方法论而非情绪推进，抗波动能力较强。", "你具有明显的复盘意识，通常能从一次挫折中提炼出下一步改进方案。", "你对“可持续”很敏感，短期看似慢，但长期效率更高。", "你在资源有限时仍能保持秩序感，这是一项重要优势。", "你在涉及长期回报的事项上更有耐心，能够承受阶段性慢增长。", "你更重视长期信用而非短期表现，这使你在复杂关系中更易获得信任。"
+          ],
+          [
+            "需要注意的是，压力上升时你容易进入过度控制模式。", "当外部节奏过快时，你可能出现“想得太全、动得太慢”的现象。", "你有时会把标准设得过高，导致启动门槛偏高。", "在人际协作中，偶尔会因为追求质量而忽略表达速度。", "在疲劳周期里，你更容易出现决策迟滞而非冲动。", "当目标模糊时你会频繁自我校验，建议用可量化节点替代主观判断。", "你在高压环境下容易陷入“独立扛事”，适度求助会更高效。"
+          ],
+          [
+            "建议把目标拆解成“主线目标+阶段动作+复盘节点”三层结构。", "建议维持“周小结+月复盘”的节奏，让优势稳定兑现。", "建议把每次关键任务设为两档标准（基础达成/进阶达成），降低执行阻力。", "建议在高压期做减法，保留关键动作，避免被噪音牵引。", "建议通过固定输出节奏来提升确定性，比如每周固定推进核心任务。", "建议在每个阶段预留缓冲时间，防止计划过满导致执行质量下降。", "建议建立“先行动后优化”的工作习惯，避免因为过度准备影响节奏。"
+          ]
+        ], [5, 5, 5]);
+        parts.push(profileLongSection);
 
-        parts.push(
-          "【事业财运详解】\n" +
-          "事业方面，你更适合可累计信誉与方法论的赛道：例如长期运营、专业服务、内容与产品结合型岗位。你的贵点并非短期爆发，而是可复制、可沉淀、可传递。\n" +
-          "财运方面，命盘与K线都提示“先守后攻”：早期优先现金流和风险底线，中期做结构化增长，后期重在资产安全与生活质量。尽量减少高频冲动决策，建立固定复盘节奏。"
-        );
+        const careerLongSection = buildLongSection("事业财运详解", [
+          [
+            "事业上你更适合可沉淀信用与方法的赛道，例如长期服务、专业咨询、系统运营。", "你的职业优势在于把复杂事务流程化，适合承担“搭系统、做标准、提效率”的职责。", "你在工作中属于先稳后快型，初期不显山露水，中后期优势会持续放大。", "你的成长路径偏复利结构，适合在同一主赛道深耕并扩展横向能力。", "你的职业价值体现为“可靠交付 + 可复制方法”，长期竞争力强。"
+          ],
+          [
+            "财务层面宜采用“先守后攻”，优先稳定现金流，再布局增长资产。", "你的财运更怕节奏失衡而非机会不足，重点是仓位和风险管理。", "建议建立分层账户：日常、储备、成长三类资金独立管理。", "在收益与安全冲突时，优先守住底线，再图上限。", "避免高频冲动决策，使用固定复盘周期会让收益曲线更平滑。"
+          ],
+          [
+            "执行上建议每季度确立一个主目标，其他事项围绕主目标服务。", "建议在每次职业转折前做“投入-回报-退出”评估，减少试错成本。", "建议把核心成果显性化（文档、案例、项目），强化市场议价能力。", "建议把精力优先投入高杠杆环节，如关键客户、关键能力、关键流程。", "建议在上升期加速积累可复用资产，而不是只追求短期业绩。"
+          ]
+        ], [4, 4, 4]);
+        parts.push(careerLongSection);
 
-        parts.push(
-          "【婚恋与人际】\n" +
-          "感情模式上，你更看重稳定、尊重与成长同步。适配关系的关键，不在甜言密语，而在长期的行动兑现。\n" +
-          "婚恋建议：\n" +
-          "1）把“价值观一致”放在“情绪浓度”之前；\n" +
-          "2）冲突时优先讲事实与边界，避免冷战拉长；\n" +
-          "3）共同规划财务与时间，关系会更稳。\n" +
-          "人际方面适合“少而精”的圈层经营，重质量胜过重数量。"
-        );
+        const relationLongSection = buildLongSection("婚恋与人际", [
+          [
+            "关系模式上，你更看重长期信任、稳定边界和共同成长。", "在亲密关系中，你对“承诺是否可兑现”比“表达是否热烈”更敏感。", "你倾向于慢热但稳定的连接方式，一旦建立信任，关系黏性较高。", "你在人际合作中偏重原则与秩序，适合与规则意识强的人搭档。", "你更偏好“少而精”的关系网络，不追求无效热闹。"
+          ],
+          [
+            "当分歧出现时，建议优先处理事实，再处理情绪。", "建议避免冷处理拉长冲突周期，及时做边界沟通更有效。", "在关系中尽量避免“预设对方意图”，先做明确确认。", "建议建立固定沟通机制，减少误解积累。", "关键矛盾出现时，先对齐目标，再讨论方法，效率更高。"
+          ],
+          [
+            "婚恋层面建议共同规划财务与时间表，关系稳定度会明显提升。", "建议把“价值观一致性”作为长期关系筛选优先级。", "建议把重大决定拉回到可执行层面，减少抽象争论。", "建议维持“尊重差异 + 共同规则”的关系结构。", "建议在高压时期主动降低沟通门槛，保持连接不断线。"
+          ]
+        ], [4, 4, 4]);
+        parts.push(relationLongSection);
 
-        parts.push(
-          "【健康与修复】\n" +
-          "健康线与运势线联动明显：当作息规律、运动稳定时，你的执行力和决策质量都会同步上升。反之，熬夜与过劳会放大焦虑和误判。\n" +
-          "建议采用三层健康机制：基础层（睡眠饮食）、提升层（力量与心肺）、修复层（情绪减压与体检）。每季度至少做一次系统复盘。"
-        );
+        const healthLongSection = buildLongSection("健康与修复", [
+          [
+            "你的状态与作息稳定性高度相关，睡眠质量直接影响判断质量。", "从节律看，你更适合中长期稳定训练，而非间歇式高强度透支。", "当体能下滑时，决策波动会放大，因此健康管理是核心生产力。", "你对压力并非不能承受，而是需要通过规律化机制来分散压力峰值。", "只要体能与作息稳定，你的执行力和情绪稳定性会同步提升。"
+          ],
+          [
+            "建议采用“三层健康结构”：基础作息、规律运动、情绪修复。", "建议设置可量化健康指标，如每周运动频次、平均睡眠时长。", "建议在高压周降低非必要目标，保留睡眠与核心动作。", "建议把恢复日写入日程，避免长期透支。", "建议每季度做一次体检与生活节律回顾。"
+          ],
+          [
+            "在疲劳阶段不要做重大决定，可先做信息收集，待恢复后决策。", "情绪管理建议采用“记录触发点-识别模式-调整动作”的闭环。", "建议把运动与工作日程绑定，避免被临时事务挤压。", "建议减少熬夜后的高风险决策，优先保障认知清晰度。", "建议建立稳定放松机制，如散步、冥想、阅读等低负荷修复手段。"
+          ]
+        ], [4, 4, 4]);
+        parts.push(healthLongSection);
 
-        const decadeBlocks = [10, 20, 30, 40, 50, 60, 70].map(describeDecade);
+        const decadeRanges = [
+          [0, 9], [10, 19], [20, 29], [30, 39], [40, 49],
+          [50, 59], [60, 69], [70, 79], [80, 89], [90, 100]
+        ];
+        const decadeBlocks = decadeRanges.map(function (r) {
+          return describeRange(r[0], r[1]);
+        });
         parts.push("【十年流年分段】\n" + decadeBlocks.join("\n\n"));
 
-        const extraTemplates = [
-          "【大运取舍】\n凡运势上行阶段，宜主动争取更高平台；凡回撤阶段，宜先修结构后求速度。若遇事业与情感冲突，先守身心与现金流，再图局部突破。",
-          "【用神策略】\n以“喜用落实”为核心：若喜" + useInfo.use + "，则在现实中对应“补资源、补协作、补执行”；若忌" + useInfo.avoid + "，则对应“防冲动、防透支、防关系消耗”。",
-          "【关键提醒】\n你的人生胜负手，不在单点天赋，而在稳定输出。把每次低谷当作调仓期，把每次高峰当作再配置期，长期结果会优于多数同龄人。"
+        const uniqueBlocks = [
+          "【职业路线细化】\n你更适合“一个核心能力 + 两个协同能力”的结构化发展。核心能力决定不可替代性，协同能力决定跨场景迁移能力。",
+          "【财富结构优化】\n把收入分成日常现金流、成长投入、风险准备三部分，先做稳定盘，再做增量盘，长期收益更稳。",
+          "【关系边界策略】\n关系中的核心是边界与信任并存。边界清晰并不冷漠，反而能让长期关系更有安全感。",
+          "【学习升级节奏】\n每年聚焦一个可量化能力目标，比同时追很多目标更有效。你适合慢变量累积，而不是短期噱头。",
+          "【执行力增强】\n把目标从“想做成”改为“每周做几次”，把模糊愿望变成可执行动作，运势会体现为持续上行。",
+          "【情绪管理建议】\n出现波动并不代表退步，通常是认知更新期。关键是保持规律作息和最小行动，不让节奏断掉。",
+          "【家庭协同】\n家庭关系的关键不是争对错，而是统一节奏与优先级。共识稳定后，个人事业推进会更顺。",
+          "【健康优先级】\n建议保持每周固定运动频次，优先保证睡眠。身体稳定时，你的判断力会明显提升。",
+          "【人际筛选】\n少而精的社交圈更适合你。优先维护长期可靠的合作关系，而不是追逐短期热度。",
+          "【机会判断】\n遇到新机会时先看“是否可持续、是否可复制、是否可退出”，再决定是否投入。",
+          "【风险控制】\n重大选择遵循“先底线、后上限”的顺序。保住下限后，上升空间自然出现。",
+          "【节奏掌控】\n你的人生更像复利曲线，短期看不显著，拉长周期后优势明显。",
+          "【成长路线】\n与其频繁换道，不如在主赛道上不断迭代方法与资源配置。",
+          "【价值兑现】\n把经验沉淀成可复用方法，价值会从个人劳动转向系统化产出。",
+          "【关键节点】\n高波动年份建议少做情绪决策，多做信息增量决策。",
+          "【决策框架】\n把每次重大决策写成“目标-方案-风险-回撤”，能显著降低误判。",
+          "【合作建议】\n合作前先明确分工、收益和退出机制，能减少中后期摩擦。",
+          "【事业护城河】\n持续输出专业能力和信用记录，是你最稳健的长期资产。",
+          "【长期主义】\n专注可积累的事情，三年后你会明显领先于短线思维者。",
+          "【资源整合】\n你适合把人脉、经验、方法整合成系统，而不是孤立使用。",
+          "【能量分配】\n每天把精力优先给最关键任务，再处理琐事，效率提升明显。",
+          "【阶段回撤处理】\n回撤期做减法：减目标、减焦虑、减无效社交，快速恢复主线。",
+          "【表达与影响力】\n你的影响力来自长期稳定兑现，而非短期强表达。",
+          "【复盘机制】\n固定周复盘与月复盘，是把运势优势转成现实成果的关键动作。",
+          "【资源定价】\n你的价值应通过成果和流程双维度来定价，避免仅用时间换收入。",
+          "【长期稳定】\n越是在变化期，越要坚持基础制度，稳定本身就是稀缺竞争力。",
+          "【效率管理】\n把高价值任务放在精力峰值时段执行，完成质量会明显提高。",
+          "【阶段布局】\n每个十年阶段都应有不同重心：积累期重能力，扩张期重结构，守成期重系统。",
+          "【协同机制】\n你适合把关键关系转化为协同网络，而非临时互助关系。",
+          "【行为纪律】\n可持续成果来自可重复动作，纪律性是运势落地的桥梁。"
         ];
 
-        let loop = 0;
-        while (parts.join("\n\n").length < 5200 && loop < 36) {
-          const temp = extraTemplates[loop % extraTemplates.length];
-          parts.push(
-            temp +
-            "\n延伸判断：" + profile.name + "在" + profile.birthPlace + "成长背景下，环境变量会影响具体节奏。" +
-            "建议每年设定“事业、财务、关系、健康”四象限目标，并在每月做一次偏差校正。" +
-            "当你把复盘制度化，命盘中的优势会被持续放大。"
-          );
-          loop++;
+        const extensionVariants = [
+          "延伸判断：你的成长轨迹受地域文化与家庭节奏共同影响，建议把年度目标拆成季度里程碑，避免年底突击。",
+          "延伸判断：在资源有限阶段，先保证现金流和健康，再追求规模扩张，会更符合你的长期结构。",
+          "延伸判断：每次做重大选择前，建议先写下最坏情境和应对方案，能够显著降低焦虑与误判。",
+          "延伸判断：你适合建立“输入-实践-复盘-沉淀”的闭环，连续执行比单次爆发更有效。",
+          "延伸判断：若出现关系与事业冲突，优先保留长期价值高的一侧，短期损失可在后续修复。",
+          "延伸判断：建议建立个人知识库，把经验沉淀成模板，可持续放大你的执行效率。",
+          "延伸判断：在高压力时期，减少无效承诺，保留关键行动，会明显改善运势体感。",
+          "延伸判断：每季度保留一段“策略空窗期”用于校准方向，可避免路径依赖。",
+          "延伸判断：当你能把复杂问题拆成可执行清单，整体节奏会从被动转为主动。",
+          "延伸判断：保持稳定作息是你提升判断质量的底层杠杆，优先级应高于短期任务。"
+        ];
+
+        const deepInsights = [
+          "深度分析：从你的运势结构看，这个主题不是短期决策题，而是长期配置题。建议你按“目标-资源-节奏-反馈”四步法推进，每一步都设定客观检查点，避免仅凭感受判断成败。",
+          "深度分析：这类议题在你的人生中会反复出现，真正的突破点不在一次性强攻，而在持续稳定地做正确动作。只要连续执行三到六个月，趋势通常会出现可观转变。",
+          "深度分析：当前阶段最怕的是“方向正确但节奏失控”。你需要给每个目标设置上限和下限，保证推进速度与身心承载能力一致，这样才能长期不掉线。",
+          "深度分析：你的结构更适合“先搭系统再追速度”。先把流程、模板、关键指标建立起来，再扩大投入规模，效率会明显高于直接堆时间。",
+          "深度分析：很多波动并非运势本身的问题，而是策略与环境错配。建议每季度做一次策略体检：哪些方法有效、哪些应停止、哪些该升级。"
+        ];
+
+        const actionPlans = [
+          "执行建议：未来四周请固定每周一次复盘，分别记录“做对了什么、做错了什么、下周只改一件事”。复盘越具体，改进越稳定。",
+          "执行建议：把这个主题拆成“日动作、周动作、月动作”三级任务。日动作负责连续性，周动作负责校正，月动作负责升级。",
+          "执行建议：当你感到犹豫时，先做最小闭环动作（10-30分钟可完成），再决定是否扩展。这样能显著减少拖延。",
+          "执行建议：建立一个可视化进度板，把关键指标放在同一屏幕。每次决策前先看数据，再看情绪，能有效降低误判。",
+          "执行建议：建议设置“风险缓冲带”，包括时间缓冲、资金缓冲和情绪缓冲。缓冲带越充分，执行越从容。"
+        ];
+
+        const riskAlerts = [
+          "风险提醒：不要在高波动阶段同时开启过多战线，容易导致精力分散。宁可少做，也要做深。",
+          "风险提醒：避免“短期比较”触发的冲动决策。你的优势来自长期复利，不来自单次胜负。",
+          "风险提醒：关系层面的消耗会直接影响事业效率。请定期清理无效社交，把资源留给关键关系。",
+          "风险提醒：如果连续两周睡眠不足，建议立即降档目标。先恢复状态，再恢复强度。",
+          "风险提醒：任何高收益方案都要先看可回撤性，确保出现失误时仍可快速回到主线。"
+        ];
+
+        const shuffledBlocks = pickMany(uniqueBlocks, uniqueBlocks.length);
+        for (let i = 0; i < shuffledBlocks.length; i++) {
+          if (parts.join("\n\n").length >= 5200) break;
+          const ext = extensionVariants[i % extensionVariants.length];
+          const deep = deepInsights[i % deepInsights.length];
+          const plan = actionPlans[i % actionPlans.length];
+          const risk = riskAlerts[i % riskAlerts.length];
+          parts.push(shuffledBlocks[i] + "\n" + deep + "\n" + plan + "\n" + risk + "\n" + ext);
         }
 
         parts.push(
@@ -471,7 +940,7 @@
           "短期（3个月）：聚焦一个最重要目标，建立每周复盘表。\n" +
           "中期（1-3年）：完成主业护城河建设，形成稳定现金流与核心作品。\n" +
           "长期（3年以上）：在稳定关系、健康体能和资产安全三方面同步升级。\n" +
-          "本解读为静态网页规则生成，仅供个人成长与规划参考。"
+          "本解读为静态网页规则生成，仅供个人成长与规划参考，不构成任何医疗、法律、投资或婚恋决策依据。请理性看待相关内容，反对封建迷信，避免将结果作为绝对判断。"
         );
 
         return parts.join("\n\n");
@@ -485,17 +954,90 @@
           return b.low < a.low ? b : a;
         }, trendData[0]);
         metaInfo.innerHTML = [
-          '<span class="tag">姓名：' + profile.name + "</span>",
-          '<span class="tag">性别：' + profile.gender + "</span>",
-          '<span class="tag">出生地：' + profile.birthPlace + "</span>",
-          '<span class="tag">四柱（简化）：' + baziInfo.yearGZ + " " + baziInfo.monthGZ + " " + baziInfo.dayGZ + " " + baziInfo.hourGZ + "</span>",
-          '<span class="tag">主元素：' + baziInfo.mainElement + "</span>",
-          '<span class="tag">峰值年龄：' + peak.age + "岁（" + peak.high + "）</span>",
-          '<span class="tag">回撤年龄：' + valley.age + "岁（" + valley.low + "）</span>'
+          `<span class="tag">姓名：${profile.name}</span>`,
+          `<span class="tag">性别：${profile.gender}</span>`,
+          `<span class="tag">出生地：${profile.birthPlace}</span>`,
+          `<span class="tag">四柱（简化）：${baziInfo.yearGZ} ${baziInfo.monthGZ} ${baziInfo.dayGZ} ${baziInfo.hourGZ}</span>`,
+          `<span class="tag">主元素：${baziInfo.mainElement}</span>`,
+          `<span class="tag">四柱来源：静态节气算法</span>`,
+          `<span class="tag">峰值年龄：${peak.age}岁（${peak.high}）</span>`,
+          `<span class="tag">回撤年龄：${valley.age}岁（${valley.low}）</span>`
         ].join("");
       }
 
-      function runGenerate() {
+      function setProgress(percent, text) {
+        progressWrap.classList.add("show");
+        progressBar.style.width = Math.max(0, Math.min(100, percent)) + "%";
+        progressText.textContent = text;
+      }
+
+      function getSubmitUsageKey() {
+        const key = paidData && paidData.tradeNo ? paidData.tradeNo : "preview_mode";
+        return "life_kline_used_" + key;
+      }
+
+      function isUsed() {
+        return localStorage.getItem(getSubmitUsageKey()) === "1";
+      }
+
+      function markUsed() {
+        localStorage.setItem(getSubmitUsageKey(), "1");
+      }
+
+      function setInputsDisabled(disabled) {
+        nameEl.disabled = disabled;
+        birthDateEl.disabled = disabled;
+        birthHourEl.disabled = disabled;
+        genderEl.disabled = disabled;
+        birthPlaceEl.disabled = disabled;
+      }
+
+      function lockByUsage() {
+        setInputsDisabled(true);
+        generateBtn.disabled = true;
+        generateBtn.textContent = "本次付费已提交";
+        setProgress(100, "本次付费资格已使用。若需测试其他日期，请返回付费页重新支付。");
+      }
+
+      function openConfirmModal(summaryText) {
+        confirmSummary.textContent = summaryText;
+        confirmMask.classList.add("show");
+        confirmMask.setAttribute("aria-hidden", "false");
+      }
+
+      function closeConfirmModal() {
+        confirmMask.classList.remove("show");
+        confirmMask.setAttribute("aria-hidden", "true");
+      }
+
+      if (!paidData || !paidData.unlocked) {
+        // 不阻断页面功能，避免因本地存储异常导致“点击无反应”。
+        setProgress(0, "提示：未检测到付费记录，当前为本地预览模式。");
+        setTimeout(function () {
+          progressWrap.classList.remove("show");
+        }, 1400);
+      }
+
+      if (isUsed()) {
+        lockByUsage();
+      }
+
+      function sleep(ms) {
+        return new Promise(function (resolve) {
+          setTimeout(resolve, ms);
+        });
+      }
+
+      async function runGenerate() {
+        if (isUsed()) {
+          lockByUsage();
+          return;
+        }
+        if (isGenerating) return;
+        isGenerating = true;
+        generateBtn.disabled = true;
+        generateBtn.textContent = "生成中...";
+
         const name = nameEl.value.trim();
         const birthDate = birthDateEl.value;
         const birthHour = Number(birthHourEl.value);
@@ -503,25 +1045,35 @@
         const birthPlace = birthPlaceEl.value.trim();
 
         if (!name || !birthDate || Number.isNaN(birthHour) || !birthPlace) {
-          alert("请完整填写姓名、生日、时辰、性别、出生地。");
+          setProgress(0, "请完整填写姓名、生日、时辰、性别、出生地。");
+          isGenerating = false;
+          generateBtn.disabled = false;
+          generateBtn.textContent = "生成人生K线图";
           return;
         }
 
         const dateObj = new Date(birthDate + "T00:00:00");
         if (Number.isNaN(dateObj.getTime())) {
-          alert("生日格式无效，请重新选择。");
+          setProgress(0, "生日格式无效，请重新选择。");
+          isGenerating = false;
+          generateBtn.disabled = false;
+          generateBtn.textContent = "生成人生K线图";
           return;
         }
 
-        const year = dateObj.getFullYear();
-        const month = dateObj.getMonth() + 1;
-        const yearGZ = getYearGZ(year);
-        const yearGanIndex = GAN.indexOf(yearGZ[0]);
-        const monthGZ = getMonthGZ(yearGanIndex, month);
-        const dayGZ = getDayGZ(dateObj);
+        try {
+        setProgress(10, "正在校验输入信息...");
+        await sleep(80);
+
+        setProgress(20, "正在按节气与干支规则计算四柱...");
+        const yearGZ = getYearGZByLiChun(dateObj);
+        const monthGZ = getMonthGZByYearAndDate(yearGZ, dateObj);
+        const dayGZ = getDayGZ(dateObj, birthHour);
         const dayGanIndex = GAN.indexOf(dayGZ[0]);
         const hourGZ = getHourGZ(dayGanIndex, birthHour);
         const mainElement = getElementByGan(dayGZ[0]);
+        setProgress(35, "四柱计算完成（静态节气算法）");
+        await sleep(80);
 
         const profile = {
           name: name,
@@ -540,21 +1092,61 @@
 
         const seed = hashString([name, birthDate, birthHour, gender, birthPlace].join("|"));
         const trendData = buildTrendData(seed, gender === "男" ? 1.3 : -0.5);
+        setProgress(55, "正在绘制K线图...");
+        await sleep(50);
         drawKLine(trendData);
         renderMeta(profile, baziInfo, trendData);
+        setProgress(75, "正在生成长篇解读...");
+        await sleep(30);
         readingText.textContent = generateReading(profile, baziInfo, trendData);
+        markUsed();
+        setProgress(100, "生成完成");
+        await sleep(700);
+        lockByUsage();
+        } catch (err) {
+          setProgress(0, "生成失败：" + (err && err.message ? err.message : "未知错误"));
+        } finally {
+          isGenerating = false;
+          if (!isUsed() && !isLockedAfterConfirm) {
+            generateBtn.disabled = false;
+            generateBtn.textContent = "生成人生K线图";
+          }
+        }
       }
 
-      generateBtn.addEventListener("click", runGenerate);
-      resetBtn.addEventListener("click", function () {
-        nameEl.value = "";
-        birthDateEl.value = "";
-        birthHourEl.value = "0";
-        genderEl.value = "男";
-        birthPlaceEl.value = "";
-        metaInfo.innerHTML = '<span class="tag">等待输入信息生成</span>';
-        readingText.textContent = "请先输入信息并点击“生成人生K线图”。";
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      generateBtn.addEventListener("click", function () {
+        if (isUsed()) {
+          lockByUsage();
+          return;
+        }
+        const name = nameEl.value.trim();
+        const birthDate = birthDateEl.value;
+        const birthHour = birthHourEl.value;
+        const gender = genderEl.value;
+        const birthPlace = birthPlaceEl.value.trim();
+        if (!name || !birthDate || !birthPlace) {
+          setProgress(0, "请先完整填写姓名、生日、时辰、性别、出生地，再提交。");
+          return;
+        }
+        const summaryText = [
+          "姓名：" + name,
+          "生日：" + birthDate,
+          "时辰：" + String(birthHour).padStart(2, "0") + ":00",
+          "性别：" + gender,
+          "出生地：" + birthPlace
+        ].join("\n");
+        openConfirmModal(summaryText);
+      });
+
+      confirmCancelBtn.addEventListener("click", closeConfirmModal);
+      confirmMask.addEventListener("click", function (e) {
+        if (e.target === confirmMask) closeConfirmModal();
+      });
+      confirmOkBtn.addEventListener("click", function () {
+        closeConfirmModal();
+        isLockedAfterConfirm = true;
+        setInputsDisabled(true);
+        runGenerate();
       });
     })();
   </script>
