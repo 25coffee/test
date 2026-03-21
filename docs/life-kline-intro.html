@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人生K线图 - 功能介绍</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(140deg, #f0fdf4, #eff6ff);
+      color: #1f2937;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+      padding: 28px;
+    }
+    h1 { font-size: 30px; margin-bottom: 10px; }
+    .desc { color: #4b5563; line-height: 1.8; margin-bottom: 16px; }
+    .block {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      background: #fcfcff;
+    }
+    .block h2 { font-size: 20px; margin-bottom: 8px; }
+    ul { padding-left: 18px; line-height: 1.9; color: #374151; }
+    .pay-images {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .pay-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+    }
+    .pay-item p { font-weight: 600; margin-bottom: 8px; }
+    .pay-item img {
+      width: 100%;
+      border-radius: 10px;
+      display: block;
+    }
+    .action-row {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    button, .back-link {
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 12px 22px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pay-btn {
+      background: linear-gradient(135deg, #16a34a, #0ea5e9);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.28);
+    }
+    .back-link {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    .tips { margin-top: 12px; color: #6b7280; font-size: 13px; }
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+    .modal-mask.show { display: flex; }
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.28);
+    }
+    .modal h3 { margin-bottom: 10px; }
+    .modal p { color: #4b5563; font-size: 14px; margin-bottom: 10px; line-height: 1.7; }
+    .modal input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .modal input:focus { outline: none; border-color: #0ea5e9; }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .modal-actions button {
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .cancel-btn { background: #f3f4f6; color: #374151; }
+    .ok-btn { background: #16a34a; color: #fff; }
+    .error-text {
+      min-height: 18px;
+      color: #dc2626;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>人生K线图</h1>
+    <p class="desc">这是一个纯静态网页版的人生运势图工具，不依赖 AI 服务。输入生日、时辰、性别、出生地和姓名后，系统会生成运势K线图和长篇解读文本。</p>
+
+    <section class="block">
+      <h2>功能介绍</h2>
+      <ul>
+        <li>生成“人生阶段运势K线图”（起伏、波段、关键年份标记）。</li>
+        <li>输出基础命盘信息（简化版，逻辑参考八字排盘脚本思路）。</li>
+        <li>自动生成约 5000 字中文解读，覆盖性格、事业、财务、情感、家庭、健康与行动建议。</li>
+        <li>所有计算在浏览器本地完成，不上传个人信息。</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>付费码截图</h2>
+      <div class="pay-images">
+        <div class="pay-item">
+          <p>支付宝收款码</p>
+          <img src="./Alipay pay.png" alt="支付宝收款码">
+        </div>
+        <div class="pay-item">
+          <p>微信收款码</p>
+          <img src="./WeChat pay.png" alt="微信收款码">
+        </div>
+      </div>
+      <p class="tips">请支付后点击“付费”，输入交易单号后即可进入正式功能页。</p>
+    </section>
+
+    <div class="action-row">
+      <button class="pay-btn" id="payBtn">付费</button>
+      <a class="back-link" href="./index.html">返回首页</a>
+    </div>
+  </main>
+
+  <div class="modal-mask" id="modalMask" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">输入交易单号</h3>
+      <p>请输入你的支付交易单号（固定格式：<code>LIFE-YYYYMMDD-XXXXXXXX</code>，最后 8 位为大写字母或数字）。</p>
+      <input id="tradeNoInput" type="text" placeholder="例如：LIFE-20260321-AB12CD34">
+      <div class="error-text" id="tradeError"></div>
+      <div class="modal-actions">
+        <button class="cancel-btn" id="cancelBtn">取消</button>
+        <button class="ok-btn" id="confirmBtn">确认进入</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const payBtn = document.getElementById("payBtn");
+      const modalMask = document.getElementById("modalMask");
+      const cancelBtn = document.getElementById("cancelBtn");
+      const confirmBtn = document.getElementById("confirmBtn");
+      const tradeNoInput = document.getElementById("tradeNoInput");
+      const tradeError = document.getElementById("tradeError");
+
+      function openModal() {
+        modalMask.classList.add("show");
+        modalMask.setAttribute("aria-hidden", "false");
+        tradeNoInput.value = "";
+        tradeError.textContent = "";
+        tradeNoInput.focus();
+      }
+
+      function closeModal() {
+        modalMask.classList.remove("show");
+        modalMask.setAttribute("aria-hidden", "true");
+      }
+
+      function validateTradeNo(value) {
+        if (!value) return "请先输入交易单号";
+        if (!/^LIFE-\d{8}-[A-Z0-9]{8}$/.test(value)) {
+          return "交易单号格式错误，应为 LIFE-YYYYMMDD-XXXXXXXX（8位大写字母或数字）";
+        }
+        const dateText = value.slice(5, 13);
+        const year = Number(dateText.slice(0, 4));
+        const month = Number(dateText.slice(4, 6));
+        const day = Number(dateText.slice(6, 8));
+        if (year < 2020 || year > 2099) {
+          return "交易日期年份超出范围（2020-2099）";
+        }
+        const maxDay = new Date(year, month, 0).getDate();
+        if (month < 1 || month > 12 || day < 1 || day > maxDay) {
+          return "交易日期无效，请检查 YYYYMMDD";
+        }
+        return "";
+      }
+
+      payBtn.addEventListener("click", openModal);
+      cancelBtn.addEventListener("click", closeModal);
+      modalMask.addEventListener("click", function (e) {
+        if (e.target === modalMask) closeModal();
+      });
+
+      confirmBtn.addEventListener("click", function () {
+        const tradeNo = tradeNoInput.value.trim().toUpperCase();
+        tradeNoInput.value = tradeNo;
+        const err = validateTradeNo(tradeNo);
+        if (err) {
+          tradeError.textContent = err;
+          return;
+        }
+        const payload = {
+          tradeNo: tradeNo,
+          paidAt: new Date().toISOString(),
+          unlocked: true
+        };
+        localStorage.setItem("life_kline_paid", JSON.stringify(payload));
+        window.location.href = "./life-kline.html";
+      });
+    })();
+  </script>
+</body>
+</html>

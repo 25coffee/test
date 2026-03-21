@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人生K线图 - 正式版</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(145deg, #f8fafc, #ecfeff);
+      color: #111827;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: 0 20px 52px rgba(15, 23, 42, 0.14);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #0ea5e9, #16a34a);
+      color: #fff;
+      padding: 20px 24px;
+    }
+    .header h1 { font-size: 30px; margin-bottom: 6px; }
+    .header p { opacity: 0.92; line-height: 1.6; font-size: 14px; }
+    .content {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      padding: 18px;
+    }
+    .panel {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+    }
+    .panel h2 { font-size: 18px; margin-bottom: 10px; }
+    .field { margin-bottom: 10px; }
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+    }
+    .field input, .field select {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 14px;
+    }
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+    }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    button, a.btn-link {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .generate-btn {
+      background: linear-gradient(135deg, #16a34a, #0ea5e9);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
+    }
+    .reset-btn { background: #f3f4f6; color: #374151; }
+    .main-right { display: grid; gap: 16px; }
+    .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #374151;
+    }
+    .tag {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #ecfeff;
+      border: 1px solid #bae6fd;
+    }
+    #klineCanvas {
+      width: 100%;
+      height: 360px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      background: #fcfcff;
+    }
+    .reading {
+      line-height: 1.9;
+      color: #1f2937;
+      white-space: pre-wrap;
+      max-height: 560px;
+      overflow: auto;
+      padding-right: 6px;
+    }
+    .muted { color: #6b7280; font-size: 13px; line-height: 1.7; }
+    @media (max-width: 940px) {
+      .content { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>人生K线图</h1>
+      <p>本页面为静态版，参考八字排盘思路做简化计算，不调用 AI。输入完整信息后生成“人生运势K线图”与长篇解读。</p>
+    </div>
+
+    <div class="content">
+      <section class="panel">
+        <h2>个人信息</h2>
+        <div class="field">
+          <label for="name">姓名</label>
+          <input id="name" type="text" placeholder="请输入姓名">
+        </div>
+        <div class="field">
+          <label for="birthDate">生日（公历）</label>
+          <input id="birthDate" type="date">
+        </div>
+        <div class="field">
+          <label for="birthHour">出生时辰（24小时）</label>
+          <select id="birthHour"></select>
+        </div>
+        <div class="field">
+          <label for="gender">性别</label>
+          <select id="gender">
+            <option value="男">男</option>
+            <option value="女">女</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="birthPlace">出生地</label>
+          <input id="birthPlace" type="text" placeholder="例如：浙江杭州">
+        </div>
+        <div class="actions">
+          <button class="generate-btn" id="generateBtn">生成人生K线图</button>
+          <button class="reset-btn" id="resetBtn">重置</button>
+          <a class="btn-link reset-btn" href="./life-kline-intro.html">返回介绍页</a>
+        </div>
+        <p class="muted" style="margin-top: 10px;">提示：交易验证通过后本地可用，页面不上传隐私信息，刷新后可再次生成。</p>
+      </section>
+
+      <section class="main-right">
+        <div class="panel">
+          <h2>命盘概览（简化）</h2>
+          <div class="meta" id="metaInfo">
+            <span class="tag">等待输入信息生成</span>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>人生运势K线图（10岁到80岁）</h2>
+          <canvas id="klineCanvas" width="760" height="360"></canvas>
+        </div>
+        <div class="panel">
+          <h2>约5000字解读</h2>
+          <div class="reading" id="readingText">请先输入信息并点击“生成人生K线图”。</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const paid = localStorage.getItem("life_kline_paid");
+      let paidData = null;
+      try {
+        paidData = paid ? JSON.parse(paid) : null;
+      } catch (e) {
+        paidData = null;
+      }
+      if (!paidData || !paidData.unlocked) {
+        window.location.href = "./life-kline-intro.html";
+        return;
+      }
+
+      const hourSelect = document.getElementById("birthHour");
+      for (let h = 0; h <= 23; h++) {
+        const opt = document.createElement("option");
+        opt.value = String(h);
+        opt.textContent = String(h).padStart(2, "0") + ":00";
+        hourSelect.appendChild(opt);
+      }
+
+      const nameEl = document.getElementById("name");
+      const birthDateEl = document.getElementById("birthDate");
+      const birthHourEl = document.getElementById("birthHour");
+      const genderEl = document.getElementById("gender");
+      const birthPlaceEl = document.getElementById("birthPlace");
+      const generateBtn = document.getElementById("generateBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const metaInfo = document.getElementById("metaInfo");
+      const readingText = document.getElementById("readingText");
+      const canvas = document.getElementById("klineCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const GAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
+      const ZHI = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
+      const HOUR_ZHI = ["子", "丑", "丑", "寅", "寅", "卯", "卯", "辰", "辰", "巳", "巳", "午", "午", "未", "未", "申", "申", "酉", "酉", "戌", "戌", "亥", "亥", "子"];
+
+      function hashString(input) {
+        let hash = 2166136261;
+        for (let i = 0; i < input.length; i++) {
+          hash ^= input.charCodeAt(i);
+          hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+        }
+        return hash >>> 0;
+      }
+
+      function makeRandom(seed) {
+        let x = seed || 123456789;
+        return function () {
+          x ^= x << 13;
+          x ^= x >>> 17;
+          x ^= x << 5;
+          return ((x >>> 0) % 100000) / 100000;
+        };
+      }
+
+      function getYearGZ(year) {
+        const baseYear = 1984;
+        const offset = year - baseYear;
+        const gan = GAN[((offset % 10) + 10) % 10];
+        const zhi = ZHI[((offset % 12) + 12) % 12];
+        return gan + zhi;
+      }
+
+      function getMonthGZ(yearGanIndex, month) {
+        const gan = GAN[(yearGanIndex * 2 + month + 1) % 10];
+        const zhi = ZHI[(month + 1) % 12];
+        return gan + zhi;
+      }
+
+      function getDayGZ(date) {
+        const base = new Date("1984-02-02T00:00:00");
+        const diffDays = Math.floor((date - base) / 86400000);
+        const gan = GAN[((diffDays % 10) + 10) % 10];
+        const zhi = ZHI[((diffDays % 12) + 12) % 12];
+        return gan + zhi;
+      }
+
+      function getHourGZ(dayGanIndex, hour) {
+        const zhi = HOUR_ZHI[hour];
+        const zhiIndex = ZHI.indexOf(zhi);
+        const gan = GAN[(dayGanIndex * 2 + zhiIndex) % 10];
+        return gan + zhi;
+      }
+
+      function getElementByGan(gan) {
+        if ("甲乙".includes(gan)) return "木";
+        if ("丙丁".includes(gan)) return "火";
+        if ("戊己".includes(gan)) return "土";
+        if ("庚辛".includes(gan)) return "金";
+        return "水";
+      }
+
+      function buildTrendData(seed, genderBias) {
+        const rand = makeRandom(seed);
+        const arr = [];
+        let prevClose = 52 + rand() * 10 + genderBias;
+        for (let age = 10; age <= 80; age += 2) {
+          const cycle = Math.sin((age - 10) / 8) * 8 + Math.cos(age / 5) * 4;
+          const noise = (rand() - 0.5) * 10;
+          const open = Math.max(10, Math.min(95, prevClose + (rand() - 0.5) * 6));
+          const close = Math.max(8, Math.min(98, open + cycle * 0.18 + noise));
+          const high = Math.min(100, Math.max(open, close) + rand() * 6 + 1.5);
+          const low = Math.max(0, Math.min(open, close) - rand() * 6 - 1.5);
+          arr.push({
+            age: age,
+            open: Number(open.toFixed(1)),
+            close: Number(close.toFixed(1)),
+            high: Number(high.toFixed(1)),
+            low: Number(low.toFixed(1))
+          });
+          prevClose = close;
+        }
+        return arr;
+      }
+
+      function drawKLine(data) {
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const left = 46;
+        const right = 16;
+        const top = 16;
+        const bottom = 30;
+        const chartW = w - left - right;
+        const chartH = h - top - bottom;
+
+        ctx.strokeStyle = "#d1d5db";
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 5; i++) {
+          const y = top + (chartH * i / 5);
+          ctx.beginPath();
+          ctx.moveTo(left, y);
+          ctx.lineTo(w - right, y);
+          ctx.stroke();
+
+          const value = (100 - i * 20).toString();
+          ctx.fillStyle = "#6b7280";
+          ctx.font = "12px sans-serif";
+          ctx.fillText(value, 10, y + 4);
+        }
+
+        const step = chartW / data.length;
+        const bodyWidth = Math.max(6, step * 0.48);
+
+        function mapY(v) {
+          return top + (100 - v) / 100 * chartH;
+        }
+
+        data.forEach(function (item, idx) {
+          const x = left + step * idx + step * 0.5;
+          const yOpen = mapY(item.open);
+          const yClose = mapY(item.close);
+          const yHigh = mapY(item.high);
+          const yLow = mapY(item.low);
+          const up = item.close >= item.open;
+          const color = up ? "#dc2626" : "#16a34a";
+
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(x, yHigh);
+          ctx.lineTo(x, yLow);
+          ctx.stroke();
+
+          const rectY = Math.min(yOpen, yClose);
+          const rectH = Math.max(1.6, Math.abs(yOpen - yClose));
+          ctx.fillStyle = color;
+          ctx.fillRect(x - bodyWidth / 2, rectY, bodyWidth, rectH);
+
+          if (idx % 5 === 0) {
+            ctx.fillStyle = "#6b7280";
+            ctx.font = "12px sans-serif";
+            ctx.fillText(String(item.age), x - 10, h - 10);
+          }
+        });
+      }
+
+      function generateReading(profile, baziInfo, trendData) {
+        const parts = [];
+
+        function getUseAvoidByElement(el) {
+          if (el === "木") return { use: "水、木", avoid: "金过旺", style: "仁性外显、重成长" };
+          if (el === "火") return { use: "木、火", avoid: "水过旺", style: "表达强、行动快" };
+          if (el === "土") return { use: "火、土", avoid: "木过旺", style: "重稳定、守信用" };
+          if (el === "金") return { use: "土、金", avoid: "火过旺", style: "结构清晰、决断强" };
+          return { use: "金、水", avoid: "土过旺", style: "思维灵活、感受敏锐" };
+        }
+
+        function avgClose(items) {
+          if (!items.length) return 50;
+          const total = items.reduce(function (sum, item) { return sum + item.close; }, 0);
+          return total / items.length;
+        }
+
+        function decadeSlice(startAge) {
+          return trendData.filter(function (d) {
+            return d.age >= startAge && d.age <= startAge + 9;
+          });
+        }
+
+        function describeDecade(startAge) {
+          const items = decadeSlice(startAge);
+          const avg = avgClose(items);
+          const max = items.reduce(function (a, b) { return b.high > a.high ? b : a; }, items[0]);
+          const min = items.reduce(function (a, b) { return b.low < a.low ? b : a; }, items[0]);
+          let trendWord = "震荡整理";
+          if (items[items.length - 1].close - items[0].open > 6) trendWord = "顺势上行";
+          else if (items[items.length - 1].close - items[0].open < -6) trendWord = "先扬后抑";
+          let lifeHint = "稳扎稳打，先固本后扩张。";
+          if (avg >= 65) lifeHint = "主动争取资源，适合做跃迁决策。";
+          else if (avg <= 42) lifeHint = "以守为攻，重视现金流与健康管理。";
+          return (
+            "【" + startAge + "-" + (startAge + 9) + "岁流年】\n" +
+            "阶段均值：" + avg.toFixed(1) + "，走势：" + trendWord + "；高点约在" + max.age + "岁（" + max.high + "），低点约在" + min.age + "岁（" + min.low + "）。\n" +
+            "十年建议：" + lifeHint + "在职业上保持主航道，不做情绪型跳槽；在关系上避免冷处理，强调沟通闭环；在财务上提高备用金覆盖月数。"
+          );
+        }
+
+        const useInfo = getUseAvoidByElement(baziInfo.mainElement);
+        const opening = [
+          "【命盘总论】",
+          profile.name + "（" + profile.gender + "命），生于" + profile.birthPlace + "。四柱简化为：" + baziInfo.yearGZ + "年、" + baziInfo.monthGZ + "月、" + baziInfo.dayGZ + "日、" + baziInfo.hourGZ + "时。",
+          "日主五行偏" + baziInfo.mainElement + "，命性风格为“" + useInfo.style + "”。喜用倾向：" + useInfo.use + "；需节制倾向：" + useInfo.avoid + "。整体运势呈现“有起有伏、以中后程见稳”为主线。",
+          "说明：本报告为静态规则模型，参考传统八字排盘逻辑做简化演绎，不涉及AI推理，不作为医疗、法律或投资唯一依据。"
+        ].join("\n");
+        parts.push(opening);
+
+        parts.push(
+          "【格局气质与性情】\n" +
+          "从命理结构看，你的优势在于目标感与执行力能形成闭环：确定方向后，通常不轻易被短期噪音干扰。短板在于当外界节奏过快时，容易出现“认知先行、身体滞后”的疲劳模式。\n" +
+          "建议采取“主线 + 副线”策略：主线追求长期复利，副线满足兴趣表达，避免把所有期待压在单一结果上。"
+        );
+
+        parts.push(
+          "【事业财运详解】\n" +
+          "事业方面，你更适合可累计信誉与方法论的赛道：例如长期运营、专业服务、内容与产品结合型岗位。你的贵点并非短期爆发，而是可复制、可沉淀、可传递。\n" +
+          "财运方面，命盘与K线都提示“先守后攻”：早期优先现金流和风险底线，中期做结构化增长，后期重在资产安全与生活质量。尽量减少高频冲动决策，建立固定复盘节奏。"
+        );
+
+        parts.push(
+          "【婚恋与人际】\n" +
+          "感情模式上，你更看重稳定、尊重与成长同步。适配关系的关键，不在甜言密语，而在长期的行动兑现。\n" +
+          "婚恋建议：\n" +
+          "1）把“价值观一致”放在“情绪浓度”之前；\n" +
+          "2）冲突时优先讲事实与边界，避免冷战拉长；\n" +
+          "3）共同规划财务与时间，关系会更稳。\n" +
+          "人际方面适合“少而精”的圈层经营，重质量胜过重数量。"
+        );
+
+        parts.push(
+          "【健康与修复】\n" +
+          "健康线与运势线联动明显：当作息规律、运动稳定时，你的执行力和决策质量都会同步上升。反之，熬夜与过劳会放大焦虑和误判。\n" +
+          "建议采用三层健康机制：基础层（睡眠饮食）、提升层（力量与心肺）、修复层（情绪减压与体检）。每季度至少做一次系统复盘。"
+        );
+
+        const decadeBlocks = [10, 20, 30, 40, 50, 60, 70].map(describeDecade);
+        parts.push("【十年流年分段】\n" + decadeBlocks.join("\n\n"));
+
+        const extraTemplates = [
+          "【大运取舍】\n凡运势上行阶段，宜主动争取更高平台；凡回撤阶段，宜先修结构后求速度。若遇事业与情感冲突，先守身心与现金流，再图局部突破。",
+          "【用神策略】\n以“喜用落实”为核心：若喜" + useInfo.use + "，则在现实中对应“补资源、补协作、补执行”；若忌" + useInfo.avoid + "，则对应“防冲动、防透支、防关系消耗”。",
+          "【关键提醒】\n你的人生胜负手，不在单点天赋，而在稳定输出。把每次低谷当作调仓期，把每次高峰当作再配置期，长期结果会优于多数同龄人。"
+        ];
+
+        let loop = 0;
+        while (parts.join("\n\n").length < 5200 && loop < 36) {
+          const temp = extraTemplates[loop % extraTemplates.length];
+          parts.push(
+            temp +
+            "\n延伸判断：" + profile.name + "在" + profile.birthPlace + "成长背景下，环境变量会影响具体节奏。" +
+            "建议每年设定“事业、财务、关系、健康”四象限目标，并在每月做一次偏差校正。" +
+            "当你把复盘制度化，命盘中的优势会被持续放大。"
+          );
+          loop++;
+        }
+
+        parts.push(
+          "【结语与行动纲领】\n" +
+          "短期（3个月）：聚焦一个最重要目标，建立每周复盘表。\n" +
+          "中期（1-3年）：完成主业护城河建设，形成稳定现金流与核心作品。\n" +
+          "长期（3年以上）：在稳定关系、健康体能和资产安全三方面同步升级。\n" +
+          "本解读为静态网页规则生成，仅供个人成长与规划参考。"
+        );
+
+        return parts.join("\n\n");
+      }
+
+      function renderMeta(profile, baziInfo, trendData) {
+        const peak = trendData.reduce(function (a, b) {
+          return b.high > a.high ? b : a;
+        }, trendData[0]);
+        const valley = trendData.reduce(function (a, b) {
+          return b.low < a.low ? b : a;
+        }, trendData[0]);
+        metaInfo.innerHTML = [
+          '<span class="tag">姓名：' + profile.name + "</span>",
+          '<span class="tag">性别：' + profile.gender + "</span>",
+          '<span class="tag">出生地：' + profile.birthPlace + "</span>",
+          '<span class="tag">四柱（简化）：' + baziInfo.yearGZ + " " + baziInfo.monthGZ + " " + baziInfo.dayGZ + " " + baziInfo.hourGZ + "</span>",
+          '<span class="tag">主元素：' + baziInfo.mainElement + "</span>",
+          '<span class="tag">峰值年龄：' + peak.age + "岁（" + peak.high + "）</span>",
+          '<span class="tag">回撤年龄：' + valley.age + "岁（" + valley.low + "）</span>'
+        ].join("");
+      }
+
+      function runGenerate() {
+        const name = nameEl.value.trim();
+        const birthDate = birthDateEl.value;
+        const birthHour = Number(birthHourEl.value);
+        const gender = genderEl.value;
+        const birthPlace = birthPlaceEl.value.trim();
+
+        if (!name || !birthDate || Number.isNaN(birthHour) || !birthPlace) {
+          alert("请完整填写姓名、生日、时辰、性别、出生地。");
+          return;
+        }
+
+        const dateObj = new Date(birthDate + "T00:00:00");
+        if (Number.isNaN(dateObj.getTime())) {
+          alert("生日格式无效，请重新选择。");
+          return;
+        }
+
+        const year = dateObj.getFullYear();
+        const month = dateObj.getMonth() + 1;
+        const yearGZ = getYearGZ(year);
+        const yearGanIndex = GAN.indexOf(yearGZ[0]);
+        const monthGZ = getMonthGZ(yearGanIndex, month);
+        const dayGZ = getDayGZ(dateObj);
+        const dayGanIndex = GAN.indexOf(dayGZ[0]);
+        const hourGZ = getHourGZ(dayGanIndex, birthHour);
+        const mainElement = getElementByGan(dayGZ[0]);
+
+        const profile = {
+          name: name,
+          gender: gender,
+          birthDate: birthDate,
+          birthHour: birthHour,
+          birthPlace: birthPlace
+        };
+        const baziInfo = {
+          yearGZ: yearGZ,
+          monthGZ: monthGZ,
+          dayGZ: dayGZ,
+          hourGZ: hourGZ,
+          mainElement: mainElement
+        };
+
+        const seed = hashString([name, birthDate, birthHour, gender, birthPlace].join("|"));
+        const trendData = buildTrendData(seed, gender === "男" ? 1.3 : -0.5);
+        drawKLine(trendData);
+        renderMeta(profile, baziInfo, trendData);
+        readingText.textContent = generateReading(profile, baziInfo, trendData);
+      }
+
+      generateBtn.addEventListener("click", runGenerate);
+      resetBtn.addEventListener("click", function () {
+        nameEl.value = "";
+        birthDateEl.value = "";
+        birthHourEl.value = "0";
+        genderEl.value = "男";
+        birthPlaceEl.value = "";
+        metaInfo.innerHTML = '<span class="tag">等待输入信息生成</span>';
+        readingText.textContent = "请先输入信息并点击“生成人生K线图”。";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      });
+    })();
+  </script>
+</body>
+</html>
