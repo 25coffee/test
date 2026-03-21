@@ -209,7 +209,7 @@
 
     <div class="hint"></div>
     <div class="feature-entry">
-      <a href="./life-kline-intro.html">人生k线图</a>
+      <a href="./life-kline-intro.html" id="lifeKlineEntry">人生k线图</a>
     </div>
   </div>
 
@@ -308,6 +308,15 @@
         loading.classList.remove('show');
       }
     });
+
+    // 兜底跳转：部分浏览器插件会劫持默认链接点击，这里补一层显式导航。
+    (function () {
+      const entry = document.getElementById('lifeKlineEntry');
+      if (!entry) return;
+      entry.addEventListener('click', function () {
+        window.location.href = './life-kline-intro.html';
+      });
+    })();
   </script>
 
   <!-- busuanzi PV 统计脚本（静态站点可用） -->
