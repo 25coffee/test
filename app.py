@@ -4,6 +4,8 @@ from collections import Counter
 import os
 import re
 import hashlib
+import subprocess
+import sys
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -196,6 +198,65 @@ def process_test():
     
     except Exception as e:
         return jsonify({'error': f'处理错误: {str(e)}'}), 500
+
+
+@app.route('/api/bazi_pillars', methods=['POST'])
+def api_bazi_pillars():
+    """通过 bazi.py 计算四柱（优先用真实排盘脚本）"""
+    try:
+        data = request.get_json(silent=True) or {}
+        year = int(data.get('year'))
+        month = int(data.get('month'))
+        day = int(data.get('day'))
+        hour = int(data.get('hour'))
+    except Exception:
+        return jsonify({'error': '参数错误：year/month/day/hour 必须为整数'}), 400
+
+    if not (1 <= month <= 12 and 1 <= day <= 31 and 0 <= hour <= 23):
+        return jsonify({'error': '参数范围错误：month(1-12) day(1-31) hour(0-23)'}), 400
+
+    script_path = os.path.join(os.path.dirname(__file__), 'bazi.py')
+    if not os.path.exists(script_path):
+        return jsonify({'error': '未找到 bazi.py'}), 500
+
+    try:
+        cmd = [sys.executable, script_path, '-g', str(year), str(month), str(day), str(hour)]
+        proc = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            errors='ignore',
+            timeout=20
+        )
+        output = (proc.stdout or '') + '\n' + (proc.stderr or '')
+
+        # 从输出中提取: "四柱：甲子 乙丑 丙寅 丁卯"
+        m = re.search(r'四柱：\s*([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]\s+[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]\s+[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]\s+[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])', output)
+        if not m:
+            # 兼容多空格或 ANSI 干扰
+            clean = re.sub(r'\x1b\[[0-9;]*m', '', output)
+            m = re.search(r'四柱：\s*([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]\s+[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]\s+[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]\s+[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])', clean)
+
+        if not m:
+            return jsonify({'error': 'bazi.py 输出中未找到四柱结果'}), 500
+
+        pillars = m.group(1).split()
+        if len(pillars) != 4:
+            return jsonify({'error': '四柱解析失败'}), 500
+
+        return jsonify({
+            'success': True,
+            'yearGZ': pillars[0],
+            'monthGZ': pillars[1],
+            'dayGZ': pillars[2],
+            'hourGZ': pillars[3],
+            'source': 'bazi.py'
+        })
+    except subprocess.TimeoutExpired:
+        return jsonify({'error': 'bazi.py 计算超时'}), 504
+    except Exception as e:
+        return jsonify({'error': f'bazi.py 计算失败: {str(e)}'}), 500
 
 def migrate_old_tests():
     """迁移旧的单个JSON文件到统一的tests.json"""
